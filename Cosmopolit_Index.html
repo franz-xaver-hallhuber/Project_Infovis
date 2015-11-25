@@ -5,8 +5,87 @@
     <title>The Munich Cosmopolit Index</title>
     <script type="text/javascript" src="cosmoScript.js"></script>
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+    <!--
+    http://www.mstatistik-muenchen.de/indikatorenatlas/html5/atlas.html?indicator=i57&date=2014
+    https://upload.wikimedia.org/wikipedia/commons/5/50/M%C3%BCnchen_-_Stadtbezirke_und_Stadtbezirksteile_%28Karte%29.svg
+    -->
+
+    <style>
+        div.bar {
+            display: inline-block;
+            width: 20px;
+            height: 75px;   /* We'll override this later */
+            background-color: teal;
+        }
+    </style>
 </head>
 <body>
+
+<script>
+
+    //    d3.select("body").append("p").text("New paragraph!");
+
+    var dataset = [ 5, 10, 15, 20, 25 ];
+    d3.select("body")
+            .selectAll("p")
+            .data(dataset)
+            .enter()
+            .append("p")
+            .text(function(d) {
+                return "I can count up to " + d;
+            })
+            .style("color", function(d) {
+                if (d > 15) {   //Threshold of 15
+                    return "red";
+                } else {
+                    return "black";
+                }
+            });
+
+    d3.select("body")
+            .selectAll("div")
+            .data(dataset)
+            .enter()
+            .append("div")
+            .attr("class", "bar")
+            .style("height", function(d){
+                var height = d*4;
+                return height+"px";
+            })
+            .style("margin-right", "2px");
+
+
+    var svg = d3.select("body")
+            .append("svg");
+
+    var w = 500;
+    var h = 50;
+
+
+    var circles = svg.selectAll("circle")
+            .data(dataset)
+            .enter()
+            .append("circle");
+
+
+
+    circles.attr("cx", function(d, i) {
+                return (i * 50) + 25;
+            })
+            .attr("cy", h/2)
+            .attr("r", function(d) {
+                return d;
+            });
+
+
+
+</script>
+
+<div style="display: inline-block;
+            width: 20px;
+            height: 75px;
+            background-color: teal;"></div>
 
 </body>
 </html>
