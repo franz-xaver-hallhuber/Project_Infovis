@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <title>The Munich Cosmopolit Index</title>
     <script type="text/javascript" src="cosmoScript.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="cosmoStyle.css">
 
     <!--
     http://www.mstatistik-muenchen.de/indikatorenatlas/html5/atlas.html?indicator=i57&date=2014
     https://upload.wikimedia.org/wikipedia/commons/5/50/M%C3%BCnchen_-_Stadtbezirke_und_Stadtbezirksteile_%28Karte%29.svg
+    http://stackoverflow.com/questions/11808860/arrow-triangles-on-my-svg-line
     -->
 
     <style>
@@ -24,6 +26,26 @@
 <body>
 
 <script>
+
+
+        var data = {
+            resource_id: 'e3c28365-935f-40a6-9c14-d3aa95c601f8', // the resource id
+//            limit: 5, // get 5 results
+    //        q: 'jones' // query for 'jones'
+        };
+        $.ajax({
+            url: 'https://www.opengov-muenchen.de/api/action/datastore_search',
+            data: data,
+            dataType: 'jsonp',
+            success: function(data) {
+                alert('Total results found: ' + data.result.total)
+                console.log(data.result);
+            }
+        });
+
+
+
+
 
     //    d3.select("body").append("p").text("New paragraph!");
 
@@ -78,6 +100,78 @@
             .attr("r", function(d) {
                 return d;
             });
+
+
+    var svgtwo = d3.select("body")
+            .append("svg")
+            .attr("width", 500)
+            .attr("height", 500);
+
+    // code, code, code, irrelevant code...
+
+    var lines = svgtwo.selectAll("line")
+            .data(dataset)
+            .enter()
+            .append("line");
+
+    animateLines();
+
+    function animateLines(){
+        lines.attr({
+                    'x1': function(d, i){return i*50},
+                    'y1': 20,
+                    'x2': function(d, i){return i*50+50},
+                    'y2': 20})
+                .attr("stroke-width", "2px")
+                .attr("stroke", "red")
+                .transition()
+                .duration(1000)
+                .ease("elastic")
+                .attr({
+                    'x1': function(d, i){return i*100},
+                    'y1': 20,
+                    'x2': function(d, i){return i*100+50},
+                    'y2': 20
+                })
+                .each("end", animateLines);
+    }
+
+
+
+
+    //        .attr("stroke", "red")
+    //            .attr("stroke-width", "2px");
+    ;
+
+    //    function timeForTimeline(){ // har
+    //        var timeline = svgtwo.append("line")
+    //                .attr("stroke", "red")
+    //                .attr("stroke-width", "2px");
+    //        repeat();
+    //
+    //        function repeat() {
+    //            timeline.attr({
+    //                        'x1': 0,
+    //                        'y1': 130,
+    //                        'x2': 168,
+    //                        'y2': 130
+    //                    })
+    //                    .transition()
+    //                    .duration(4000)
+    //                    .ease("linear")
+    //                    .attr({
+    //                        'x1': 0,
+    //                        'y1': 430,
+    //                        'x2': 168,
+    //                        'y2': 430
+    //                    })
+    //                    .each("end", repeat);
+    //        };
+    //    };
+    //
+    //
+    //
+    //    timeForTimeline();
 
 
 
