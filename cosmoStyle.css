@@ -32,3 +32,7 @@
 .area.inside-m:hover {
     fill: orange;
 }
+
+.area.selected, .area.selected:hover {
+    fill: red;
+}

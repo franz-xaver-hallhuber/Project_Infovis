@@ -29,10 +29,88 @@
                         <!-- console.log(e.target.id); -->
                         svgRoot.getElementById("area-name").textContent = e.target.id;
                     });
+
                     all[i].addEventListener("click", function(e){
-                        e.target.css("")
+                        var area = e.target;
+
+                        toggleClass($(area), "selected");
+
+                        var pt = svgRoot.createSVGPoint();
+
+                        function cursorPoint(e){
+                            pt.x = e.clientX; pt.y = e.clientY;
+                            return pt.matrixTransform(svgRoot.getScreenCTM().inverse());
+                        }
+                        var loc = cursorPoint(e);
+                            // Use loc.x and loc.y here
+                        console.log(loc);
+
+
+//                        d3.select(svgDoc).select("svg")
+//                                .append("line")
+//                                .attr("x1", loc.x)
+//                                .attr("y1", loc.y)
+//                                .attr("x2", 422.73699951171875)
+//                                .attr("y2", 279.98748779296875)
+//                                .style("stroke", "purple")
+//                                .style("stroke-width", "2");
+
+                        var startx = 422.73699951171875;
+                        var starty = 279.98748779296875;
+
+                        var difx = startx-loc.x;
+                        var dify = starty-loc.y;
+
+                        var dist = Math.sqrt( (startx-loc.x)*(startx-loc.x) + (starty-loc.y)*(starty -loc.y) );
+                        console.log(dist);
+
+                        var xBez = (startx+loc.x)/2+0.9*difx;
+                        var yBez = (starty+loc.y)/2+0.4*dify;
+
+                        d3.select(svgDoc).select("svg")
+                                .append("path")
+                                .attr("d", "M "
+                                        +loc.x+" "+loc.y
+                                        +" Q "
+                                        +xBez + " "+yBez+" "
+                                        +startx+" "+starty)
+                                .style("stroke", "green")
+                                .style("stroke-width", "2")
+                                .style("fill", "none");
+
+                        d3.select(svgDoc).select("svg")
+                                .append("circle")
+                                .attr("cx", xBez)
+                                .attr("cy", yBez)
+                                .attr("r", 5)
+                            .style("fill", "purple");
+
+
+
+
+//                        var svgSelection = d3.select("svg");
+//                        svgSelection.append("circle")
+//                                .attr("cx", 25)
+//                                .attr("cy", 25)
+//                                .attr("r", 2500)
+//                                .style("fill", "purple");
+
+//                        var bodySelection = d3.select("body");
+//                        console.log(bodySelection);
+
+//                        var svgSelection = bodySelection.append("svg")
+//                                                        .attr("width", 50)
+//                                                        .attr("height", 50);
+
+//                        console.log(svgDoc);
+//                        console.log(svgRoot);
+
+
                     })
                 }
+
+
+
 
 
             },false);
