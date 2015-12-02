@@ -1,0 +1,34 @@
+
+
+.area.ausland {
+    fill:#666666;
+}
+
+.area.deutschland {
+    fill:#8C8C8C;
+}
+.area.bayern {
+    fill:#B2B2B2
+}
+
+.area.inside-m {
+    fill:#D8D8D8;
+}
+
+
+.area {
+    stroke:black;
+    stroke-width:1px;
+}
+
+.area:hover {
+    pointer-events:all;
+}
+
+.area.outside-m:hover {
+    fill: steelblue;
+}
+
+.area.inside-m:hover {
+    fill: orange;
+}

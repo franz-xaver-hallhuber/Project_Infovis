@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Munich Cosmopolit Index</title>
+    <link rel="stylesheet" href="cosmoStyle.css">
+
+    <script type="text/javascript" src="cosmoScript.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+
+    <script>
+        $(document).ready(function(){
+            var svgElementInHTMLSite = document.getElementById("alphasvg");
+
+            //it's important to add an load event listener to the object, as it will load the svg doc asynchronously
+            svgElementInHTMLSite.addEventListener("load",function(){
+                var svgDoc = svgElementInHTMLSite.contentDocument; //get the inner DOM of alpha.svg
+                var svgRoot  = svgDoc.documentElement;
+
+                //now we can query stuff with jquery like this
+                //note that we pass in the svgRoot as the context node
+
+                var all = svgRoot.getElementsByTagName("path");
+
+                for (var i=0, max=all.length; i < max; i++) {
+                    all[i].addEventListener("mouseover", function(e){
+                        <!-- console.log(e.target.id); -->
+                        svgRoot.getElementById("area-name").textContent = e.target.id;
+                    });
+                    all[i].addEventListener("click", function(e){
+                        e.target.css("")
+                    })
+                }
+
+
+            },false);
+        })
+    </script>
+
+    <!--
+    http://www.mstatistik-muenchen.de/indikatorenatlas/html5/atlas.html?indicator=i57&date=2014
+    https://upload.wikimedia.org/wikipedia/commons/5/50/M%C3%BCnchen_-_Stadtbezirke_und_Stadtbezirksteile_%28Karte%29.svg
+    http://stackoverflow.com/questions/11808860/arrow-triangles-on-my-svg-line
+    -->
+
+    <style>
+
+    </style>
+</head>
+<body>
+
+<object data="muenchen_exportiert.svg" type="image/svg+xml" id="alphasvg"></object>
+
+
+
+
+
+
+</body>
+</html>
