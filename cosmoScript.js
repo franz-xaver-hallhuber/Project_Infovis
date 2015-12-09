@@ -20,7 +20,7 @@ element.attr("class", function(index, classNames){
 
 function getCursorPosition(svgRoot, e){
     var pt = svgRoot.createSVGPoint();
-    pt.x = e.clientX+10; pt.y = e.clientY+10;
+    pt.x = e.clientX; pt.y = e.clientY;
     return pt.matrixTransform(svgRoot.getScreenCTM().inverse());
 }
 
@@ -41,7 +41,7 @@ function drawConnection(svgDoc, start, loc) {
     var dify = starty - loc.y;
 
     var dist = Math.sqrt((startx - loc.x) * (startx - loc.x) + (starty - loc.y) * (starty - loc.y));
-    console.log(dist);
+    //console.log(dist);
 
     var xBez = (startx + loc.x) / 2 - 0.7 * difx;
     var yBez = (starty + loc.y) / 2 + 0.5 * dify;
@@ -60,6 +60,7 @@ function drawConnection(svgDoc, start, loc) {
             + xBez2 + " " + yBez2 + " "
             + startx + " " + starty)
         .attr("id", "currentLineShadow")
+        .attr("pointer-events", "none")
         .style("stroke", "black")
         .style("opacity", "0.3")
         .style("stroke-width", "10")
@@ -73,6 +74,7 @@ function drawConnection(svgDoc, start, loc) {
             + xBez + " " + yBez + " "
             + startx + " " + starty)
         .attr("id", "currentLine")
+        .attr("pointer-events", "none")
         .style("stroke", "green")
         .style("stroke-width", "14")
         .style("fill", "none");
