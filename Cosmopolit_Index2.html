@@ -19,99 +19,51 @@
                 var svgDoc = svgElementInHTMLSite.contentDocument; //get the inner DOM of alpha.svg
                 var svgRoot  = svgDoc.documentElement;
 
-                //now we can query stuff with jquery like this
-                //note that we pass in the svgRoot as the context node
+                var selectedArea;
+                var startPoint;
+                var endPoint;
 
-                var all = svgRoot.getElementsByTagName("path");
 
-                for (var i=0, max=all.length; i < max; i++) {
-                    all[i].addEventListener("mouseover", function(e){
-                        <!-- console.log(e.target.id); -->
+                svgRoot.addEventListener("mousemove", function(e){
+
+                    if(startPoint)
+                        drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e));
+                })
+
+
+                var allAreas = svgRoot.getElementsByTagName("path");
+                for (var i=0; i < allAreas.length; i++) {
+
+                    allAreas[i].addEventListener("mouseover", function(e){
+
                         svgRoot.getElementById("area-name").textContent = e.target.id;
+
                     });
 
-                    all[i].addEventListener("click", function(e){
-                        var area = e.target;
 
-                        toggleClass($(area), "selected");
+                    allAreas[i].addEventListener("click", function(e){
 
-                        var pt = svgRoot.createSVGPoint();
+                        var eventArea = e.target;
 
-                        function cursorPoint(e){
-                            pt.x = e.clientX; pt.y = e.clientY;
-                            return pt.matrixTransform(svgRoot.getScreenCTM().inverse());
+                        // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
+                        if($(selectedArea)[0] === $(eventArea)[0]){
+                            toggleClass($(selectedArea), "selected");
+                            selectedArea = null;
+                            startPoint = null;
+                            removeById(svgRoot, "currentLine");
+                            removeById(svgRoot, "currentLineShadow");
+
+                        } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
+
+                        toggleClass($(selectedArea), "selected");
+                        toggleClass($(eventArea), "selected");
+
+                        selectedArea = eventArea;
+                        startPoint = getCursorPosition(svgRoot, e);
+
                         }
-                        var loc = cursorPoint(e);
-                            // Use loc.x and loc.y here
-                        console.log(loc);
-
-
-//                        d3.select(svgDoc).select("svg")
-//                                .append("line")
-//                                .attr("x1", loc.x)
-//                                .attr("y1", loc.y)
-//                                .attr("x2", 422.73699951171875)
-//                                .attr("y2", 279.98748779296875)
-//                                .style("stroke", "purple")
-//                                .style("stroke-width", "2");
-
-                        var startx = 422.73699951171875;
-                        var starty = 279.98748779296875;
-
-                        var difx = startx-loc.x;
-                        var dify = starty-loc.y;
-
-                        var dist = Math.sqrt( (startx-loc.x)*(startx-loc.x) + (starty-loc.y)*(starty -loc.y) );
-                        console.log(dist);
-
-                        var xBez = (startx+loc.x)/2+0.9*difx;
-                        var yBez = (starty+loc.y)/2+0.4*dify;
-
-                        d3.select(svgDoc).select("svg")
-                                .append("path")
-                                .attr("d", "M "
-                                        +loc.x+" "+loc.y
-                                        +" Q "
-                                        +xBez + " "+yBez+" "
-                                        +startx+" "+starty)
-                                .style("stroke", "green")
-                                .style("stroke-width", "2")
-                                .style("fill", "none");
-
-                        d3.select(svgDoc).select("svg")
-                                .append("circle")
-                                .attr("cx", xBez)
-                                .attr("cy", yBez)
-                                .attr("r", 5)
-                            .style("fill", "purple");
-
-
-
-
-//                        var svgSelection = d3.select("svg");
-//                        svgSelection.append("circle")
-//                                .attr("cx", 25)
-//                                .attr("cy", 25)
-//                                .attr("r", 2500)
-//                                .style("fill", "purple");
-
-//                        var bodySelection = d3.select("body");
-//                        console.log(bodySelection);
-
-//                        var svgSelection = bodySelection.append("svg")
-//                                                        .attr("width", 50)
-//                                                        .attr("height", 50);
-
-//                        console.log(svgDoc);
-//                        console.log(svgRoot);
-
-
                     })
                 }
-
-
-
-
 
             },false);
         })
