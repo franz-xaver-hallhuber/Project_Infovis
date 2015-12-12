@@ -26,9 +26,11 @@
 
                 svgRoot.addEventListener("mousemove", function(e){
 
-                    if(startPoint)
+                    if(startPoint && !endPoint)
                         drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e));
-                })
+                    else if (startPoint && endPoint)
+                        drawConnection(svgDoc, startPoint, endPoint);
+                });
 
 
                 var allAreas = svgRoot.getElementsByTagName("path");
@@ -52,18 +54,27 @@
                             startPoint = null;
                             removeById(svgRoot, "currentLine");
                             removeById(svgRoot, "currentLineShadow");
+                            console.log("fall1");
 
+                        } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
+                            endPoint = getCursorPosition(svgRoot, e);
+                            console.log("fall2");
                         } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
 
-                        toggleClass($(selectedArea), "selected");
-                        toggleClass($(eventArea), "selected");
+                            toggleClass($(selectedArea), "selected");
+                            toggleClass($(eventArea), "selected");
 
-                        selectedArea = eventArea;
-                        startPoint = getCursorPosition(svgRoot, e);
+                            endPoint = null;
+                            removeById(svgRoot, "currentLine");
+                            removeById(svgRoot, "currentLineShadow");
+
+                            selectedArea = eventArea;
+                            startPoint = getCursorPosition(svgRoot, e);
                             console.log("id=\""+e.target.id+"\" x=\""+startPoint.x+"\" y=\""+startPoint.y+"\"");
+                            console.log("fall3");
 
                         }
-                    })
+                    });
                 }
 
             },false);
