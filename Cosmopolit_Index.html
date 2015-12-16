@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <title>The Munich Cosmopolit Index</title>
     <script type="text/javascript" src="cosmoScript.js"></script>
+
     <script src="jquery.min.js"></script>
     <script src="d3.v3.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="processRawData.js"></script>
     <link rel="stylesheet" href="cosmoStyle.css">
 
     <!--
@@ -29,89 +32,87 @@
 
 
     var filteredResults;
+    var cleanedData = [];
 
-    $.ajax({
-                url: 'https://www.opengov-muenchen.de/api/action/datastore_search',
-                data: {
-                    resource_id: '951b196b-9965-4a84-a9fc-93feffcdc6dd', // bevoelkerung-aussenwanderungsziffer-gesamt
-                    // 13660905-e6ed-404b-99c2-894712373d28 bevoelkerungbinnenwanderungsziffer
-                    limit: 10000,
-                    fields:
-                    "INDIKATOR_AUSPRAEGUNG, " + // z.B. Ausland
-                    "INDIKATOR_WERT, " +        // z.B. 4,9 [(Zuzüge-Wegzüge) / Einwohnerzahl]
-                    "BASISWERT_1, " +           // Zuzüge
-                    "BASISWERT_2, " +           // Wegzüge
-                    "BASISWERT_3, " +           // Einwohnerzahl
-                    "JAHR, " +                  // z.B. 2012
-                    "NUMMER, " +                // z.B. 4
-                    "NAME, " +                  // z.B. 04 Schwabing West
-                    "GLIEDERUNG"                // z.B. Stadtbezirk
-                },
-                dataType: 'jsonp',
-                success: function(data) {
+    // warten bis beide ajax-aufrufe die Daten vom Server haben
+    $.when(fetchAussen(), fetchBinnen()).done(function(aussenPackage, binnenPackage){
 
-                    console.log("Fetched %c"+data.result.total+"%c items from %cbevoelkerung-aussenwanderungsziffer-gesamt",
-                            "color: blue;",
-                            "color: default;",
-                            "color: blue");
+        // beiden Datensätze zusammenschmeißen in cleanedData
+        cleanedData.push.apply(cleanedData, getCleanedAussenwanderung(aussenPackage[0]));
+        cleanedData.push.apply(cleanedData, getCleanedBinnenwanderung(binnenPackage[0]));
 
-                    var cleanedData = data.result.records.filter(function(zeile){
-                        return zeile.GLIEDERUNG == "Stadtbezirk" &&
-                                zeile.NUMMER != "99" &&
-                                zeile.INDIKATOR_AUSPRAEGUNG != "insgesamt" &&
-                                zeile.INDIKATOR_AUSPRAEGUNG != "Umland" &&
-                                zeile.INDIKATOR_AUSPRAEGUNG != "Unbekannt";
-                    });
-                    data = null;
+        console.log("Formatted both sets and threw them together, now %c"+cleanedData.length+"%c items.",
+                "color: blue;",
+                "color: default;");
 
-                    console.log("Cleaned dataset, now %c"+cleanedData.length+"%c items.",
-                            "color: blue;",
-                            "color: default;");
-
-//                console.log(data.result.total);
-//                console.log(data.result);
-
-                    $.ajax({
-                                url: 'https://www.opengov-muenchen.de/api/action/datastore_search',
-                                data: {
-                                    resource_id: '13660905-e6ed-404b-99c2-894712373d28', // bevoelkerungbinnenwanderungsziffer
-                                    limit: 10000,
-                                    fields:
-                                    "INDIKATOR_AUSPRAEGUNG, " + // z.B. Deutsche, Ausländer, etc.
-                                    "INDIKATOR_WERT, " +        // z.B. 4,9 [(Zuzüge-Wegzüge) / Einwohnerzahl]
-                                    "BASISWERT_1, " +           // Zuzüge
-                                    "BASISWERT_2, " +           // Wegzüge
-                                    "BASISWERT_3, " +           // Einwohnerzahl
-                                    "JAHR, " +                  // z.B. 2012
-                                    "NUMMER, " +                // z.B. 4
-                                    "NAME, " +                  // z.B. 04 Schwabing West
-                                    "GLIEDERUNG"                // z.B. Stadtbezirk
-
-                                },
-                                dataType: 'jsonp',
-                                success: function(data) {
-
-                                    console.log("Fetched %c"+data.result.total+"%c items from %cbevoelkerungbinnenwanderungsziffer",
-                                            "color: blue;",
-                                            "color: default;",
-                                            "color: blue");
-
-                                    var cleanedData = data.result.records.filter(function(zeile){
-                                        return zeile.GLIEDERUNG == "Stadtbezirk" &&
-                                                zeile.NUMMER != "99" &&
-                                                zeile.INDIKATOR_AUSPRAEGUNG == "gesamt";
-                                    });
-                                    data = null;
-
-                                    console.log("Cleaned dataset, now %c"+cleanedData.length+"%c items.",
-                                            "color: blue;",
-                                            "color: default;");
-
-                                    console.log(cleanedData);
+        console.log(cleanedData);
 
 
 
-
+//        var dataset = [ 5, 10, 15, 20, 25 ];
+//        d3.select("body")
+//                .selectAll("p")
+//                .data(dataset)
+//                .enter()
+//                .append("p")
+//                .text(function(d) {
+//                    return "I can count up to " + d;
+//                })
+//                .style("color", function(d) {
+//                    if (d > 15) {   //Threshold of 15
+//                        return "red";
+//                    } else {
+//                        return "black";
+//                    }
+//                });
+//
+//        d3.select("body")
+//                .selectAll("div")
+//                .data(cleanedData)
+//                .enter()
+//                .append("div")
+//                .attr("class", "bar")
+//                .style("height", function(d){
+//                    var height = d.BASISWERT_1*0.4;
+//                    return height+"px";
+//                })
+//                .style("margin-right", "2px");
+//
+//
+//        var svg = d3.select("body")
+//                .append("svg");
+//
+//        var w = 500;
+//        var h = 50;
+//
+//
+//        var circles = svg.selectAll("circle")
+//                .data(dataset)
+//                .enter()
+//                .append("circle");
+//
+//
+//
+//        circles.attr("cx", function(d, i) {
+//                    return (i * 50) + 25;
+//                })
+//                .attr("cy", h/2)
+//                .attr("r", function(d) {
+//                    return d;
+//                });
+//
+//
+//        var svgtwo = d3.select("body")
+//                .append("svg")
+//                .attr("width", 500)
+//                .attr("height", 500);
+//
+//        // code, code, code, irrelevant code...
+//
+//        var lines = svgtwo.selectAll("line")
+//                .data(dataset)
+//                .enter()
+//                .append("line");
 
 
 
@@ -122,70 +123,14 @@
 
 
 
-                                    var dataset = [ 5, 10, 15, 20, 25 ];
-                                    d3.select("body")
-                                            .selectAll("p")
-                                            .data(dataset)
-                                            .enter()
-                                            .append("p")
-                                            .text(function(d) {
-                                                return "I can count up to " + d;
-                                            })
-                                            .style("color", function(d) {
-                                                if (d > 15) {   //Threshold of 15
-                                                    return "red";
-                                                } else {
-                                                    return "black";
-                                                }
-                                            });
-
-                                    d3.select("body")
-                                            .selectAll("div")
-                                            .data(cleanedData)
-                                            .enter()
-                                            .append("div")
-                                            .attr("class", "bar")
-                                            .style("height", function(d){
-                                                var height = d.BASISWERT_1*0.4;
-                                                return height+"px";
-                                            })
-                                            .style("margin-right", "2px");
-
-
-                                    var svg = d3.select("body")
-                                            .append("svg");
-
-                                    var w = 500;
-                                    var h = 50;
-
-
-                                    var circles = svg.selectAll("circle")
-                                            .data(dataset)
-                                            .enter()
-                                            .append("circle");
 
 
 
-                                    circles.attr("cx", function(d, i) {
-                                                return (i * 50) + 25;
-                                            })
-                                            .attr("cy", h/2)
-                                            .attr("r", function(d) {
-                                                return d;
-                                            });
 
 
-                                    var svgtwo = d3.select("body")
-                                            .append("svg")
-                                            .attr("width", 500)
-                                            .attr("height", 500);
 
-                                    // code, code, code, irrelevant code...
 
-                                    var lines = svgtwo.selectAll("line")
-                                            .data(dataset)
-                                            .enter()
-                                            .append("line");
+
 
 //    animateLines();
 
@@ -212,39 +157,39 @@
 
 
 
-                                    //        .attr("stroke", "red")
-                                    //            .attr("stroke-width", "2px");
-                                    ;
+        //        .attr("stroke", "red")
+        //            .attr("stroke-width", "2px");
+        ;
 
-                                    //    function timeForTimeline(){ // har
-                                    //        var timeline = svgtwo.append("line")
-                                    //                .attr("stroke", "red")
-                                    //                .attr("stroke-width", "2px");
-                                    //        repeat();
-                                    //
-                                    //        function repeat() {
-                                    //            timeline.attr({
-                                    //                        'x1': 0,
-                                    //                        'y1': 130,
-                                    //                        'x2': 168,
-                                    //                        'y2': 130
-                                    //                    })
-                                    //                    .transition()
-                                    //                    .duration(4000)
-                                    //                    .ease("linear")
-                                    //                    .attr({
-                                    //                        'x1': 0,
-                                    //                        'y1': 430,
-                                    //                        'x2': 168,
-                                    //                        'y2': 430
-                                    //                    })
-                                    //                    .each("end", repeat);
-                                    //        };
-                                    //    };
-                                    //
-                                    //
-                                    //
-                                    //    timeForTimeline();
+        //    function timeForTimeline(){ // har
+        //        var timeline = svgtwo.append("line")
+        //                .attr("stroke", "red")
+        //                .attr("stroke-width", "2px");
+        //        repeat();
+        //
+        //        function repeat() {
+        //            timeline.attr({
+        //                        'x1': 0,
+        //                        'y1': 130,
+        //                        'x2': 168,
+        //                        'y2': 130
+        //                    })
+        //                    .transition()
+        //                    .duration(4000)
+        //                    .ease("linear")
+        //                    .attr({
+        //                        'x1': 0,
+        //                        'y1': 430,
+        //                        'x2': 168,
+        //                        'y2': 430
+        //                    })
+        //                    .each("end", repeat);
+        //        };
+        //    };
+        //
+        //
+        //
+        //    timeForTimeline();
 
 
 
@@ -255,12 +200,9 @@
 //                        console.log(data.result.records[i]);
 //                    }
 //                }
-                                }
-                            }
-                    )
-                }
-            }
-    );
+
+
+    });
 
     //        homes.filter(function (el) {
     //            return el.price <= 1000 &&

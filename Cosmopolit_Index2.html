@@ -5,79 +5,111 @@
     <title>The Munich Cosmopolit Index</title>
     <link rel="stylesheet" href="cosmoStyle.css">
 
-    <script type="text/javascript" src="cosmoScript.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
+    <script type="text/javascript" src="cosmoScript.js"></script>
+    <script type="text/javascript" src="processRawData.js"></script>
+
+
 
     <script>
+
         $(document).ready(function(){
-            var svgElementInHTMLSite = document.getElementById("alphasvg");
 
-            //it's important to add an load event listener to the object, as it will load the svg doc asynchronously
-            svgElementInHTMLSite.addEventListener("load",function(){
-                var svgDoc = svgElementInHTMLSite.contentDocument; //get the inner DOM of alpha.svg
-                var svgRoot  = svgDoc.documentElement;
+            var allDataCleaned = [];
 
-                var selectedArea;
-                var startPoint;
-                var endPoint;
+            // warten bis beide ajax-aufrufe die Daten vom Server haben
+            $.when(fetchAussen(), fetchBinnen()).done(function(aussenPackage, binnenPackage) {
 
+                // beide Datensätze zusammenschmeißen in allDataCleaned
+                allDataCleaned.push.apply(allDataCleaned, getCleanedAussenwanderung(aussenPackage[0]));
+                allDataCleaned.push.apply(allDataCleaned, getCleanedBinnenwanderung(binnenPackage[0]));
 
-                svgRoot.addEventListener("mousemove", function(e){
+                console.log("Formatted both sets and threw them together, now %c" + allDataCleaned.length + "%c items.",
+                        "color: blue;",
+                        "color: default;");
 
-                    if(startPoint && !endPoint)
-                        drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e), false);
-                    else if (startPoint && endPoint) //wenn Endpunkt gesetzt ist bleibt der Pfad stehen
-                        drawConnection(svgDoc, startPoint, endPoint, true);
-                });
+                console.log("Et voilà: ");
+                console.log(allDataCleaned);
 
 
-                var allAreas = svgRoot.getElementsByTagName("path");
-                for (var i=0; i < allAreas.length; i++) {
 
-                    allAreas[i].addEventListener("mouseover", function(e){
-                        svgRoot.getElementById("area-name").textContent = e.target.id;
+
+
+
+
+
+
+
+
+                var svgElementInHTMLSite = document.getElementById("alphasvg");
+
+                //it's important to add an load event listener to the object, as it will load the svg doc asynchronously
+                svgElementInHTMLSite.addEventListener("load",function(){
+                    var svgDoc = svgElementInHTMLSite.contentDocument; //get the inner DOM of alpha.svg
+                    var svgRoot  = svgDoc.documentElement;
+
+                    var selectedArea;
+                    var startPoint;
+                    var endPoint;
+
+
+                    svgRoot.addEventListener("mousemove", function(e){
+
+                        if(startPoint && !endPoint)
+                            drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e), false);
+                        else if (startPoint && endPoint) //wenn Endpunkt gesetzt ist bleibt der Pfad stehen
+                            drawConnection(svgDoc, startPoint, endPoint, true);
                     });
 
-                    allAreas[i].addEventListener("click", function(e){
 
-                        var eventArea = e.target;
+                    var allAreas = svgRoot.getElementsByTagName("path");
+                    for (var i=0; i < allAreas.length; i++) {
 
-                        // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
-                        if($(selectedArea)[0] === $(eventArea)[0]){
-                            toggleClass($(selectedArea), "selected");
-                            selectedArea = null;
-                            startPoint = null;
-                            removeById(svgRoot, "currentLine");
-                            removeById(svgRoot, "currentLineShadow");
-                            removeById(svgRoot, "movingCircle");
-                            console.log("fall1");
+                        allAreas[i].addEventListener("mouseover", function(e){
+                            svgRoot.getElementById("area-name").textContent = e.target.id;
+                        });
 
-                        } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
-                            endPoint = getCursorPosition(svgRoot, e);
-                            console.log("fall2");
-                        } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
+                        allAreas[i].addEventListener("click", function(e){
 
-                            toggleClass($(selectedArea), "selected");
-                            toggleClass($(eventArea), "selected");
+                            var eventArea = e.target;
 
-                            endPoint = null;
-                            removeById(svgRoot, "currentLine");
-                            removeById(svgRoot, "currentLineShadow");
-                            removeById(svgRoot, "movingCircle");
+                            // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
+                            if($(selectedArea)[0] === $(eventArea)[0]){
+                                toggleClass($(selectedArea), "selected");
+                                selectedArea = null;
+                                startPoint = null;
+                                removeById(svgRoot, "currentLine");
+                                removeById(svgRoot, "currentLineShadow");
+                                removeById(svgRoot, "movingCircle");
+                                console.log("fall1");
 
-                            selectedArea = eventArea;
-                            startPoint = getCursorPosition(svgRoot, e);
-                            console.log("id=\""+e.target.id+"\" x=\""+startPoint.x+"\" y=\""+startPoint.y+"\"");
-                            console.log("fall3");
+                            } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
+                                endPoint = getCursorPosition(svgRoot, e);
+                                console.log("fall2");
+                            } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
 
-                        }
-                    });
-                }
+                                toggleClass($(selectedArea), "selected");
+                                toggleClass($(eventArea), "selected");
 
-            },false);
-        })
+                                endPoint = null;
+                                removeById(svgRoot, "currentLine");
+                                removeById(svgRoot, "currentLineShadow");
+                                removeById(svgRoot, "movingCircle");
+
+                                selectedArea = eventArea;
+                                startPoint = getCursorPosition(svgRoot, e);
+                                console.log("id=\""+e.target.id+"\" x=\""+startPoint.x+"\" y=\""+startPoint.y+"\"");
+                                console.log("fall3");
+
+                            }
+                        });
+                    }
+
+                },false);
+            })
+        });
     </script>
 
     <!--
