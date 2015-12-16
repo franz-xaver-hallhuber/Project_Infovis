@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Munich Cosmopolit Index</title>
+    <link rel="stylesheet" href="cosmoStyle.css">
+
+    <script type="text/javascript" src="cosmoScript.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+
+    <script>
+        $(document).ready(function(){
+            console.log("doc ready");
+
+            var svg = document.getElementById("svgElement");
+            //window.addEventListener("load",function(){
+            //    console.log("svg loaded");
+            //var svgDoc = svg.contentDocument;
+                //var svgRoot = svgDoc.documentElement;
+
+
+
+            d3.select(svg)
+                    .append("rect")
+                    .attr("id","movingCircle")
+                    .attr("height","5")
+                    .attr("width","10")
+                    .attr("fill","white")
+                    .attr("opacity","0.5")
+                    .attr("y","-2.5")
+                    .append("animateMotion")
+                    .attr("id","circleAnim")
+                    .attr("dur","10s")
+                    .attr("repeatCount","indefinite")
+                    .attr("rotate","auto")
+                    .append("mpath")
+                    .attr("xlink:href","#animPath");
+
+            requestAnimationFrame(function() {
+
+            });
+
+            var anim = document.getElementById("circleAnim");
+            console.log("begin" + anim.begin);
+
+            //});
+        });
+    </script>
+</head>
+<body>
+    <div id="svgcontainer">
+        <svg onload="console.log('svg loaded');" viewBox="0 0 500 500" id="svgElement">
+            <path id="animPath" d="M 10 10 H 50 q 100 0 100 100 " stroke="red" stroke-width="5" fill-opacity="0"/>
+        </svg>
+    </div>
+</body>
+</html>

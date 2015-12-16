@@ -27,9 +27,9 @@
                 svgRoot.addEventListener("mousemove", function(e){
 
                     if(startPoint && !endPoint)
-                        drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e));
-                    else if (startPoint && endPoint)
-                        drawConnection(svgDoc, startPoint, endPoint);
+                        drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e), false);
+                    else if (startPoint && endPoint) //wenn Endpunkt gesetzt ist bleibt der Pfad stehen
+                        drawConnection(svgDoc, startPoint, endPoint, true);
                 });
 
 
@@ -37,11 +37,8 @@
                 for (var i=0; i < allAreas.length; i++) {
 
                     allAreas[i].addEventListener("mouseover", function(e){
-
                         svgRoot.getElementById("area-name").textContent = e.target.id;
-
                     });
-
 
                     allAreas[i].addEventListener("click", function(e){
 
@@ -54,6 +51,7 @@
                             startPoint = null;
                             removeById(svgRoot, "currentLine");
                             removeById(svgRoot, "currentLineShadow");
+                            removeById(svgRoot, "movingCircle");
                             console.log("fall1");
 
                         } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
@@ -67,6 +65,7 @@
                             endPoint = null;
                             removeById(svgRoot, "currentLine");
                             removeById(svgRoot, "currentLineShadow");
+                            removeById(svgRoot, "movingCircle");
 
                             selectedArea = eventArea;
                             startPoint = getCursorPosition(svgRoot, e);

@@ -31,8 +31,14 @@ function removeById(svgRoot, id){
     }
 }
 
-function drawConnection(svgDoc, start, loc) {
+function drawConnection(svgDoc, start, loc, isstatic) {
 
+    /*TODO:
+    * four lines required (from/to and their shadows)
+    * animate line direction (arrows etc)
+    * get lines' thickness from database
+    *
+    */
     var svgRoot  = svgDoc.documentElement;
 
     var startx = start.x;
@@ -43,15 +49,18 @@ function drawConnection(svgDoc, start, loc) {
     var dist = Math.sqrt((startx - loc.x) * (startx - loc.x) + (starty - loc.y) * (starty - loc.y));
     //console.log(dist);
 
+    //Bezier parameters for main line
     var xBez = (startx + loc.x) / 2 - 0.7 * difx;
     var yBez = (starty + loc.y) / 2 + 0.5 * dify;
 
+    //Bezier parameters for shadow line
     var xBez2 = (startx + loc.x) / 2 - 0.2 * difx;
     var yBez2 = (starty + loc.y) / 2 + 0.05 * dify;
 
     removeById(svgRoot, "currentLine");
     removeById(svgRoot, "currentLineShadow");
 
+    //draw shadow line
     d3.select(svgDoc).select("svg")
         .append("path")
         .attr("d", "M "
@@ -66,6 +75,8 @@ function drawConnection(svgDoc, start, loc) {
         .style("stroke-width", "10")
         .style("fill", "none");
 
+
+    //draw main line
     d3.select(svgDoc).select("svg")
         .append("path")
         .attr("d", "M "
@@ -79,7 +90,26 @@ function drawConnection(svgDoc, start, loc) {
         .style("stroke-width", "14")
         .style("fill", "none");
 
-//                        d3.select(svgDoc).select("svg")
+    if(isstatic) {
+        //moving dots
+        removeById(svgRoot, "movingCircle");
+
+        d3.select(svgDoc).select("svg")
+            .append("circle")
+            .attr("id", "movingCircle")
+            .attr("r", "7")
+            .attr("fill", "white")
+            .attr("opacity", "0.5")
+            .attr("y", "-7")
+            .append("animateMotion")
+            .attr("id", "circleAnim")
+            .attr("dur", "10s")
+            .attr("repeatCount", "indefinite")
+            .attr("rotate", "auto")
+            .append("mpath")
+            .attr("xlink:href", "#currentLine");
+    }
+    //                        d3.select(svgDoc).select("svg")
 //                                .append("circle")
 //                                .attr("cx", xBez)
 //                                .attr("cy", yBez)
@@ -103,5 +133,9 @@ function drawConnection(svgDoc, start, loc) {
 
 //                        console.log(svgDoc);
 //                        console.log(svgRoot);
+
+}
+
+function lineAnimation() {
 
 }
