@@ -54,11 +54,8 @@
 
 
                     svgRoot.addEventListener("mousemove", function(e){
-
                         if(startPoint && !endPoint)
                             drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e), false);
-                        else if (startPoint && endPoint) //wenn Endpunkt gesetzt ist bleibt der Pfad stehen
-                            drawConnection(svgDoc, startPoint, endPoint, true);
                     });
 
 
@@ -85,6 +82,8 @@
 
                             } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
                                 endPoint = getCursorPosition(svgRoot, e);
+                                drawConnection(svgDoc, startPoint, endPoint, true); //wenn Endpunkt gesetzt ist bleibt der Pfad stehen, wird nur einmal gezeichnet
+                                svgRoot.getElementById("circleAnim").beginElement(); //animation wird gestartet
                                 console.log("fall2");
                             } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
 

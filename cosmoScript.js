@@ -47,6 +47,8 @@ function drawConnection(svgDoc, start, loc, isstatic) {
     var dify = starty - loc.y;
 
     var dist = Math.sqrt((startx - loc.x) * (startx - loc.x) + (starty - loc.y) * (starty - loc.y));
+    var vel = 50; //velocity of moving animation, could indicate quantity
+    var dur = dist / vel;
     //console.log(dist);
 
     //Bezier parameters for main line
@@ -80,10 +82,10 @@ function drawConnection(svgDoc, start, loc, isstatic) {
     d3.select(svgDoc).select("svg")
         .append("path")
         .attr("d", "M "
-            + loc.x + " " + loc.y
+            + startx + " " + starty
             + " Q "
             + xBez + " " + yBez + " "
-            + startx + " " + starty)
+            + loc.x + " " + loc.y)
         .attr("id", "currentLine")
         .attr("pointer-events", "none")
         .style("stroke", "green")
@@ -103,9 +105,10 @@ function drawConnection(svgDoc, start, loc, isstatic) {
             .attr("y", "-7")
             .append("animateMotion")
             .attr("id", "circleAnim")
-            .attr("dur", "10s")
+            .attr("dur", dur + "s")
             .attr("repeatCount", "indefinite")
             .attr("rotate", "auto")
+            .attr("begin","indefinite")
             .append("mpath")
             .attr("xlink:href", "#currentLine");
     }
@@ -137,5 +140,9 @@ function drawConnection(svgDoc, start, loc, isstatic) {
 }
 
 function lineAnimation() {
+
+}
+
+function calculateDuration() {
 
 }
