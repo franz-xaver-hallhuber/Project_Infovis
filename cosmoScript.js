@@ -11,7 +11,6 @@ element.attr("class", function(index, classNames){
         } else {
             return classNames + " "+value;
         }
-        console.log($(area).attr("class"));
     });
 }
 
@@ -59,17 +58,26 @@ function drawConnection(svgDoc, start, loc, isstatic) {
     var xBez2 = (startx + loc.x) / 2 - 0.2 * difx;
     var yBez2 = (starty + loc.y) / 2 + 0.05 * dify;
 
+    //assemble paths
+    var shadepath = "M "
+    + loc.x + " " + loc.y
+    + " Q "
+    + xBez2 + " " + yBez2 + " "
+    + startx + " " + starty;
+
+    var linepath = "M "
+    + startx + " " + starty
+    + " Q "
+    + xBez + " " + yBez + " "
+    + loc.x + " " + loc.y;
+
     removeById(svgRoot, "currentLine");
     removeById(svgRoot, "currentLineShadow");
 
     //draw shadow line
     d3.select(svgDoc).select("svg")
         .append("path")
-        .attr("d", "M "
-            + loc.x + " " + loc.y
-            + " Q "
-            + xBez2 + " " + yBez2 + " "
-            + startx + " " + starty)
+        .attr("d", shadepath)
         .attr("id", "currentLineShadow")
         .attr("pointer-events", "none")
         .style("stroke", "black")
@@ -81,36 +89,90 @@ function drawConnection(svgDoc, start, loc, isstatic) {
     //draw main line
     d3.select(svgDoc).select("svg")
         .append("path")
-        .attr("d", "M "
-            + startx + " " + starty
-            + " Q "
-            + xBez + " " + yBez + " "
-            + loc.x + " " + loc.y)
+        .attr("d", linepath)
         .attr("id", "currentLine")
         .attr("pointer-events", "none")
-        .style("stroke", "green")
+        .attr("stroke-linecap","round")
+        .style("stroke", "white")
         .style("stroke-width", "14")
         .style("fill", "none");
 
     if(isstatic) {
         //moving dots
-        removeById(svgRoot, "movingCircle");
+        var arrs = $(".arrow");
 
-        d3.select(svgDoc).select("svg")
-            .append("circle")
-            .attr("id", "movingCircle")
-            .attr("r", "7")
-            .attr("fill", "white")
-            .attr("opacity", "0.5")
-            .attr("y", "-7")
-            .append("animateMotion")
-            .attr("id", "circleAnim")
-            .attr("dur", dur + "s")
-            .attr("repeatCount", "indefinite")
-            .attr("rotate", "auto")
-            .attr("begin","indefinite")
-            .append("mpath")
-            .attr("xlink:href", "#currentLine");
+
+        ////add path to div
+        ////with jQuery
+        //$(".arrow").css("motion-path",linepath);
+        //$(".arrow").css("width","7px");
+        //
+        ////with d3
+        //d3.selectAll($(".arrow"))
+        //    .style("motion-path",linepath)
+        //    .style("height","7px");
+        //
+        ////with .style element
+        //for(i=0; i<arrs.length;i++) {
+        //    arrs[i].style.motionPath = linepath;
+        //    arrs[i].style.borderRadius = "25%";
+        //}
+
+        ////trying to manipulate css file
+        //var stylesheet = document.styleSheets[0];
+        //stylesheet.insertRule(".arrow {background-color: red", 1);
+        //stylesheet.insertRule(".arrow {motion-path: path(" + linepath + ");",1);
+
+        //add manually to document head
+        $("head").append("<style type='text/css' id='dynCss'>.arrow {/*noinspection CssInvalidFunction*/motion-path: path(\"" +
+            linepath + "\");" +
+            "width: 14px;" +
+            "height: 14px;}</style>");
+
+
+
+
+
+        //start animation
+        //if (CSS && CSS.supports && CSS.supports('motion-offset', 0)) {
+            var time = 9000;
+        //len will be dependant on the path length
+            for (var i = 0, len = arrs.length; i < len; ++i) {
+
+
+                var player = arrs[i].animate([
+                    {motionOffset: '100%'},
+                    {motionOffset: 0}
+                ], {
+                    duration: time,
+                    iterations: Infinity,
+                    fill: 'both',
+                    easing: 'ease-in',
+                    delay: time * (i / arrs.length)
+                });
+            }
+        //} else {
+        //    document.documentElement.className = 'no-motionpath';
+        //}
+
+
+        //removeById(svgRoot, "movingCircle");
+        //
+        //d3.select(svgDoc).select("svg")
+        //    .append("circle")
+        //    .attr("id", "movingCircle")
+        //    .attr("r", "7")
+        //    .attr("fill", "white")
+        //    .attr("opacity", "0.5")
+        //    .attr("y", "-7")
+        //    .append("animateMotion")
+        //    .attr("id", "circleAnim")
+        //    .attr("dur", dur + "s")
+        //    .attr("repeatCount", "indefinite")
+        //    .attr("rotate", "auto")
+        //    .attr("begin","indefinite")
+        //    .append("mpath")
+        //    .attr("xlink:href", "#currentLine");
     }
     //                        d3.select(svgDoc).select("svg")
 //                                .append("circle")

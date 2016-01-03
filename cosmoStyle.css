@@ -36,3 +36,15 @@
 .area.selected, .area.selected:hover {
     fill: orange;
 }
+
+.arrow {
+    z-index: 10;
+    position: absolute;
+    top: 142px;
+    left: -65px;
+    motion-offset: 100%;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: limegreen;
+    will-change: transform;
+}
