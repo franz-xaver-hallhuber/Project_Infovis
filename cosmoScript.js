@@ -27,13 +27,12 @@ function removeById(svgRoot, id){
 function addSvgs() {
     $(".arrow").append("" +
         "<svg id='arrow' class='arrowstyle' viewBox='0 0 50 50'>" +
-        "<polygon class='arrowstyle' points='0,0 25,0 50,25 25,50 0,50 25,25' />" +
+        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25' />" +
         "</svg>")
 }
 
 function drawConnection(svgDoc, start, loc, isstatic, yes) {
 
-    var player;
 
     /*TODO:
     * four lines required (from/to and their shadows)
@@ -132,26 +131,37 @@ function drawConnection(svgDoc, start, loc, isstatic, yes) {
             "width: 14px;" +
             "height: 14px;}</style>");
 
+        //max possible length is
+        var maxlen = Math.sqrt(Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("width")),2) + Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("height")),2));
 
+        //arrow density
+        var arrdens = arrs.length / maxlen;
+        //arrow velocity
+        var arrvel = maxlen/8000;
+        var arrtime = dist / arrvel;
 
+        //required number of arrows
+        var arrcount = arrdens * dist;
 
+        console.log("arrcount " + arrcount);
 
         //start animation
         //if (CSS && CSS.supports && CSS.supports('motion-offset', 0)) {
-            var time = 9000;
+            var time = arrtime;
         //len will be dependant on the path length
-            for (var i = 0, len = arrs.length; i < len; ++i) {
+            for (var i = 0; i < arrcount; ++i) {
 
+                d3.select(arrs[i]).style("display","inline");
 
-                player = arrs[i].animate([
-                    {motionOffset: '100%'},
-                    {motionOffset: 0}
+                var player = arrs[i].animate([
+                    {motionOffset: i/100 + "%"},
+                    {motionOffset: '100%'}
                 ], {
                     duration: time,
                     iterations: Infinity,
                     fill: 'both',
-                    easing: 'ease-in',
-                    delay: time * (i / arrs.length)
+                    //easing: 'ease-in',
+                    delay: time * (i / arrcount)
                 });
             }
         //} else {
@@ -214,6 +224,8 @@ function calculateDuration() {
 
 function toggleAnimation(yes) {
     console.log("toggle" + yes);
-    yes ? $(".arrow").css("display","inline") : $(".arrow").css("display","none");
-    if(!yes) $("style[id='dynCss']").remove();
+    if(!yes) {
+        $("style[id='dynCss']").remove();
+        $(".arrow").css("display","none");
+    }
 }
