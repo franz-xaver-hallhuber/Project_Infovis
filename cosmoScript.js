@@ -1,6 +1,3 @@
-
-
-
 function toggleClass(element, value){
 
 element.attr("class", function(index, classNames){
@@ -13,9 +10,6 @@ element.attr("class", function(index, classNames){
         }
     });
 }
-
-
-
 
 function getCursorPosition(svgRoot, e){
     var pt = svgRoot.createSVGPoint();
@@ -30,7 +24,9 @@ function removeById(svgRoot, id){
     }
 }
 
-function drawConnection(svgDoc, start, loc, isstatic) {
+function drawConnection(svgDoc, start, loc, isstatic, yes) {
+
+    var player;
 
     /*TODO:
     * four lines required (from/to and their shadows)
@@ -140,7 +136,7 @@ function drawConnection(svgDoc, start, loc, isstatic) {
             for (var i = 0, len = arrs.length; i < len; ++i) {
 
 
-                var player = arrs[i].animate([
+                player = arrs[i].animate([
                     {motionOffset: '100%'},
                     {motionOffset: 0}
                 ], {
@@ -207,4 +203,10 @@ function lineAnimation() {
 
 function calculateDuration() {
 
+}
+
+function toggleAnimation(yes) {
+    console.log("toggle" + yes);
+    yes ? $(".arrow").css("display","inline") : $(".arrow").css("display","none");
+    if(!yes) $("style[id='dynCss']").remove();
 }

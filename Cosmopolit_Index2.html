@@ -78,11 +78,13 @@
                                 removeById(svgRoot, "currentLine");
                                 removeById(svgRoot, "currentLineShadow");
                                 removeById(svgRoot, "movingCircle");
+                                toggleAnimation(false);
                                 console.log("fall1");
 
                             } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
                                 endPoint = getCursorPosition(svgRoot, e);
                                 drawConnection(svgDoc, startPoint, endPoint, true); //wenn Endpunkt gesetzt ist bleibt der Pfad stehen, wird nur einmal gezeichnet
+                                toggleAnimation(true);
                                 //svgRoot.getElementById("circleAnim").beginElement(); //animation wird gestartet
                                 console.log("fall2");
                             } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
@@ -98,6 +100,8 @@
                                 selectedArea = eventArea;
                                 startPoint = getCursorPosition(svgRoot, e);
                                 console.log("id=\""+e.target.id+"\" x=\""+startPoint.x+"\" y=\""+startPoint.y+"\"");
+                                toggleAnimation(false);
+
                                 console.log("fall3");
 
                             }
