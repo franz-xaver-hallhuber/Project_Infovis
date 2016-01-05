@@ -24,6 +24,13 @@ function removeById(svgRoot, id){
     }
 }
 
+function addSvgs() {
+    $(".arrow").append("" +
+        "<svg id='arrow' class='arrowstyle' viewBox='0 0 50 50'>" +
+        "<polygon class='arrowstyle' points='0,0 25,0 50,25 25,50 0,50 25,25' />" +
+        "</svg>")
+}
+
 function drawConnection(svgDoc, start, loc, isstatic, yes) {
 
     var player;

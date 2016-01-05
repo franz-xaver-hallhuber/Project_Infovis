@@ -12,15 +12,14 @@
     <script type="text/javascript" src="processRawData.js"></script>
 
 
-
     <script>
 
-        $(document).ready(function(){
+        $(document).ready(function () {
 
             var allDataCleaned = [];
 
             // warten bis beide ajax-aufrufe die Daten vom Server haben
-            $.when(fetchAussen(), fetchBinnen()).done(function(aussenPackage, binnenPackage) {
+            $.when(fetchAussen(), fetchBinnen()).done(function (aussenPackage, binnenPackage) {
 
                 // beide Datensätze zusammenschmeißen in allDataCleaned
                 allDataCleaned.push.apply(allDataCleaned, getCleanedAussenwanderung(aussenPackage[0]));
@@ -36,80 +35,78 @@
 
             });
 
+            //add arrow svg to each div element
+            addSvgs();
+
+            var svgElementInHTMLSite = document.getElementById("alphasvg");
+
+            //it's important to add an load event listener to the object, as it will load the svg doc asynchronously
+            svgElementInHTMLSite.addEventListener("load", function () {
+                var svgDoc = svgElementInHTMLSite.contentDocument; //get the inner DOM of alpha.svg
+                var svgRoot = svgDoc.documentElement;
+
+                var selectedArea;
+                var startPoint;
+                var endPoint;
 
 
+                svgRoot.addEventListener("mousemove", function (e) {
+                    if (startPoint && !endPoint)
+                        drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e), false);
+                });
 
 
+                var allAreas = svgRoot.getElementsByTagName("path");
+                for (var i = 0; i < allAreas.length; i++) {
 
-                var svgElementInHTMLSite = document.getElementById("alphasvg");
-
-                //it's important to add an load event listener to the object, as it will load the svg doc asynchronously
-                svgElementInHTMLSite.addEventListener("load",function(){
-                    var svgDoc = svgElementInHTMLSite.contentDocument; //get the inner DOM of alpha.svg
-                    var svgRoot  = svgDoc.documentElement;
-
-                    var selectedArea;
-                    var startPoint;
-                    var endPoint;
-
-
-                    svgRoot.addEventListener("mousemove", function(e){
-                        if(startPoint && !endPoint)
-                            drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e), false);
+                    allAreas[i].addEventListener("mouseover", function (e) {
+                        svgRoot.getElementById("area-name").textContent = e.target.id;
                     });
 
+                    allAreas[i].addEventListener("click", function (e) {
 
-                    var allAreas = svgRoot.getElementsByTagName("path");
-                    for (var i=0; i < allAreas.length; i++) {
+                        var eventArea = e.target;
 
-                        allAreas[i].addEventListener("mouseover", function(e){
-                            svgRoot.getElementById("area-name").textContent = e.target.id;
-                        });
+                        // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
+                        if ($(selectedArea)[0] === $(eventArea)[0]) {
+                            toggleClass($(selectedArea), "selected");
+                            selectedArea = null;
+                            startPoint = null;
+                            removeById(svgRoot, "currentLine");
+                            removeById(svgRoot, "currentLineShadow");
+                            removeById(svgRoot, "movingCircle");
+                            toggleAnimation(false);
+                            console.log("fall1");
 
-                        allAreas[i].addEventListener("click", function(e){
+                        } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
+                            endPoint = getCursorPosition(svgRoot, e);
+                            drawConnection(svgDoc, startPoint, endPoint, true); //wenn Endpunkt gesetzt ist bleibt der Pfad stehen, wird nur einmal gezeichnet
+                            toggleAnimation(true);
+                            //svgRoot.getElementById("circleAnim").beginElement(); //animation wird gestartet
+                            console.log("fall2");
+                        } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
 
-                            var eventArea = e.target;
+                            toggleClass($(selectedArea), "selected");
+                            toggleClass($(eventArea), "selected");
 
-                            // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
-                            if($(selectedArea)[0] === $(eventArea)[0]){
-                                toggleClass($(selectedArea), "selected");
-                                selectedArea = null;
-                                startPoint = null;
-                                removeById(svgRoot, "currentLine");
-                                removeById(svgRoot, "currentLineShadow");
-                                removeById(svgRoot, "movingCircle");
-                                toggleAnimation(false);
-                                console.log("fall1");
+                            endPoint = null;
+                            removeById(svgRoot, "currentLine");
+                            removeById(svgRoot, "currentLineShadow");
+                            removeById(svgRoot, "movingCircle");
 
-                            } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
-                                endPoint = getCursorPosition(svgRoot, e);
-                                drawConnection(svgDoc, startPoint, endPoint, true); //wenn Endpunkt gesetzt ist bleibt der Pfad stehen, wird nur einmal gezeichnet
-                                toggleAnimation(true);
-                                //svgRoot.getElementById("circleAnim").beginElement(); //animation wird gestartet
-                                console.log("fall2");
-                            } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
+                            selectedArea = eventArea;
+                            startPoint = getCursorPosition(svgRoot, e);
+                            console.log("id=\"" + e.target.id + "\" x=\"" + startPoint.x + "\" y=\"" + startPoint.y + "\"");
+                            toggleAnimation(false);
 
-                                toggleClass($(selectedArea), "selected");
-                                toggleClass($(eventArea), "selected");
+                            console.log("fall3");
 
-                                endPoint = null;
-                                removeById(svgRoot, "currentLine");
-                                removeById(svgRoot, "currentLineShadow");
-                                removeById(svgRoot, "movingCircle");
+                        }
+                    });
+                }
 
-                                selectedArea = eventArea;
-                                startPoint = getCursorPosition(svgRoot, e);
-                                console.log("id=\""+e.target.id+"\" x=\""+startPoint.x+"\" y=\""+startPoint.y+"\"");
-                                toggleAnimation(false);
-
-                                console.log("fall3");
-
-                            }
-                        });
-                    }
-
-                },false);
-            })
+            }, false);
+        })
     </script>
 
     <!--
@@ -126,30 +123,28 @@
 
 <object data="muenchen_exportiert.svg" type="image/svg+xml" id="alphasvg"></object>
 <arrows>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
-    <div class="arrow" ></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
 
 </arrows>
-
-
 
 
 </body>

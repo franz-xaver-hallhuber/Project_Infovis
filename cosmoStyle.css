@@ -1,4 +1,7 @@
-
+.arrowstyle {
+    fill: limegreen;
+    stroke-width: 0;
+}
 
 .area.ausland {
     fill:#666666;
@@ -44,7 +47,5 @@
     left: -65px;
     motion-offset: 100%;
     margin: 0 auto;
-    border-radius: 50%;
-    background: limegreen;
     will-change: transform;
 }
