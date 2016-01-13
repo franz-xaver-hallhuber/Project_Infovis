@@ -18,6 +18,7 @@
 
             var allDataCleaned = [];
 
+
             // warten bis beide ajax-aufrufe die Daten vom Server haben
             $.when(fetchAussen(), fetchBinnen()).done(function (aussenPackage, binnenPackage) {
 
@@ -81,7 +82,7 @@
                         } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
                             endPoint = getCursorPosition(svgRoot, e);
                             drawConnection(svgDoc, startPoint, endPoint, true); //wenn Endpunkt gesetzt ist bleibt der Pfad stehen, wird nur einmal gezeichnet
-                            toggleAnimation(true);
+                            //toggleAnimation(true);
                             //svgRoot.getElementById("circleAnim").beginElement(); //animation wird gestartet
                             console.log("fall2");
                         } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
@@ -123,6 +124,27 @@
 
 <object data="muenchen_exportiert.svg" type="image/svg+xml" id="alphasvg"></object>
 <arrows>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
+    <div class="arrow"></div>
     <div class="arrow"></div>
     <div class="arrow"></div>
     <div class="arrow"></div>

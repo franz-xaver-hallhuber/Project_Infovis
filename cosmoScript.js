@@ -31,7 +31,7 @@ function addSvgs() {
         "</svg>")
 }
 
-function drawConnection(svgDoc, startPoint, endPoint, isstatic, yes) {
+function drawConnection(svgDoc, startPoint, endPoint, isstatic, factor) {
 
 
     /*TODO:
@@ -144,15 +144,18 @@ function drawConnection(svgDoc, startPoint, endPoint, isstatic, yes) {
         var maxlen = Math.sqrt(Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("width")),2) + Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("height")),2));
 
         //arrow density
-        var arrdens = arrs.length / maxlen;
+        var arrdens = (arrs.length / maxlen) * 0.5;
         //arrow velocity
-        var arrvel = maxlen/8000;
-        var arrtime = dist / arrvel;
+        var arrvel = maxlen/10000;
+        var arrtime = currentLineLength / arrvel;
 
         //required number of arrows
-        var arrcount = arrdens * dist;
+        var arrcount = Math.round(arrdens * currentLineLength);
 
-        console.log("arrcount " + arrcount);
+        //console.log("Values for animation:\nArrow Velocity is " + arrvel + "\n" +
+        //    "Arrow Time is " + arrtime + "\n" +
+        //    "Path length is " + currentLineLength + "\n" +
+        //    "Nr of arrows is " + arrcount);
 
         //start animation
         //if (CSS && CSS.supports && CSS.supports('motion-offset', 0)) {
@@ -160,18 +163,24 @@ function drawConnection(svgDoc, startPoint, endPoint, isstatic, yes) {
         //len will be dependant on the path length
             for (var i = 0; i < arrcount; ++i) {
 
-                d3.select(arrs[i]).style("display","inline");
+                d3.select(arrs[i])
+                    .style("animation-name", "arrowmotion")
+                    .style("animation-duration", arrtime + "ms")
+                    .style("animation-delay", time * (i / arrcount) + "ms")
+                 ;
 
-                var player = arrs[i].animate([
-                    {motionOffset: i/100 + "%"},
-                    {motionOffset: '100%'}
-                ], {
-                    duration: time,
-                    iterations: Infinity,
-                    fill: 'both',
-                    //easing: 'ease-in',
-                    delay: time * (i / arrcount)
-                });
+                //var player = arrs[i].animate([
+                //    {motionOffset: '0%'},
+                //    {motionOffset: '100%'}
+                //], {
+                //    duration: time,
+                //    iterations: Infinity,
+                //    fill: 'both',
+                //    //easing: 'ease-in',
+                //    delay: time * (i / arrcount)
+                //});
+
+                console.log("Delay for " + i + ". arrow is " + time * (i / arrcount));
             }
         //} else {
         //    document.documentElement.className = 'no-motionpath';
@@ -233,10 +242,8 @@ function calculateDuration() {
 
 }
 
-function toggleAnimation(yes) {
-    console.log("toggle" + yes);
-    if(!yes) {
-        $("style[id='dynCss']").remove();
-        $(".arrow").css("display","none");
-    }
+function toggleAnimation() {
+    $("style[id='dynCss']").remove();
+    $(".arrow").removeAttr("style")
+        .css("style","opacity:0;");
 }
