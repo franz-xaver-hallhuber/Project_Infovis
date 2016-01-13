@@ -26,8 +26,8 @@ function removeById(svgRoot, id){
 
 function addSvgs() {
     $(".arrow").append("" +
-        "<svg id='arrow' class='arrowstyle' viewBox='0 0 50 50'>" +
-        "<polygon points='25,50 0,50 25,25 0,0 25,0 50,25' />" +
+        "<svg id='arrow' class='arrowstyle' viewBox='-50 -25 50 50'>" +
+        "<polygon points='-50,-25 -25,-25 0,0 -25,25 -50,25 -25,0' />" +
         "</svg>")
 }
 
