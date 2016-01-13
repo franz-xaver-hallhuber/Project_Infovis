@@ -1,3 +1,20 @@
+@keyframes arrowmotion {
+    0% {
+        opacity: 0;
+        motion-offset:0%;
+    }
+    1% {
+        opacity: 1;
+    }
+    99% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        motion-offset:100%;
+    }
+}
+
 .arrowstyle {
     fill: limegreen;
     stroke-width: 0;
@@ -44,8 +61,11 @@
     z-index: 10;
     position: absolute;
     top: 142px;
-    left: -65px;
-    motion-offset: 100%;
+    left: -62px;
+    opacity:0;
     margin: 0 auto;
     will-change: transform;
+    animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
 }
+
