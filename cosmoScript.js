@@ -27,11 +27,11 @@ function removeById(svgRoot, id){
 function addSvgs() {
     $(".arrow").append("" +
         "<svg id='arrow' class='arrowstyle' viewBox='0 0 50 50'>" +
-        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25' />" +
+        "<polygon points='25,50 0,50 25,25 0,0 25,0 50,25' />" +
         "</svg>")
 }
 
-function drawConnection(svgDoc, start, loc, isstatic, yes) {
+function drawConnection(svgDoc, startPoint, endPoint, isstatic, yes) {
 
 
     /*TODO:
@@ -42,27 +42,27 @@ function drawConnection(svgDoc, start, loc, isstatic, yes) {
     */
     var svgRoot  = svgDoc.documentElement;
 
-    var startx = start.x;
-    var starty = start.y;
-    var difx = startx - loc.x;
-    var dify = starty - loc.y;
+    var startx = startPoint.x;
+    var starty = startPoint.y;
+    var difx = startx - endPoint.x;
+    var dify = starty - endPoint.y;
 
-    var dist = Math.sqrt((startx - loc.x) * (startx - loc.x) + (starty - loc.y) * (starty - loc.y));
+    var dist = Math.sqrt((startx - endPoint.x) * (startx - endPoint.x) + (starty - endPoint.y) * (starty - endPoint.y));
     var vel = 50; //velocity of moving animation, could indicate quantity
     var dur = dist / vel;
     //console.log(dist);
 
     //Bezier parameters for main line
-    var xBez = (startx + loc.x) / 2 - 0.7 * difx;
-    var yBez = (starty + loc.y) / 2 + 0.5 * dify;
+    var xBez = (startx + endPoint.x) / 2 - 0.7 * difx;
+    var yBez = (starty + endPoint.y) / 2 + 0.5 * dify;
 
     //Bezier parameters for shadow line
-    var xBez2 = (startx + loc.x) / 2 - 0.2 * difx;
-    var yBez2 = (starty + loc.y) / 2 + 0.05 * dify;
+    var xBez2 = (startx + endPoint.x) / 2 - 0.2 * difx;
+    var yBez2 = (starty + endPoint.y) / 2 + 0.05 * dify;
 
     //assemble paths
     var shadepath = "M "
-    + loc.x + " " + loc.y
+    + endPoint.x + " " + endPoint.y
     + " Q "
     + xBez2 + " " + yBez2 + " "
     + startx + " " + starty;
@@ -71,10 +71,12 @@ function drawConnection(svgDoc, start, loc, isstatic, yes) {
     + startx + " " + starty
     + " Q "
     + xBez + " " + yBez + " "
-    + loc.x + " " + loc.y;
+    + endPoint.x + " " + endPoint.y;
 
     removeById(svgRoot, "currentLine");
     removeById(svgRoot, "currentLineShadow");
+
+
 
     //draw shadow line
     d3.select(svgDoc).select("svg")
@@ -98,6 +100,7 @@ function drawConnection(svgDoc, start, loc, isstatic, yes) {
         .style("stroke", "white")
         .style("stroke-width", "14")
         .style("fill", "none");
+
 
     if(isstatic) {
         //moving dots
@@ -130,6 +133,12 @@ function drawConnection(svgDoc, start, loc, isstatic, yes) {
             linepath + "\");" +
             "width: 14px;" +
             "height: 14px;}</style>");
+
+
+        // length of the currentLine
+        var currentLineLength = svgDoc.getElementById("currentLine").getTotalLength();
+
+
 
         //max possible length is
         var maxlen = Math.sqrt(Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("width")),2) + Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("height")),2));
@@ -211,6 +220,8 @@ function drawConnection(svgDoc, start, loc, isstatic, yes) {
 
 //                        console.log(svgDoc);
 //                        console.log(svgRoot);
+
+
 
 }
 
