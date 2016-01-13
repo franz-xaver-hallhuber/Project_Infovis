@@ -147,12 +147,15 @@ function drawConnection(svgDoc, startPoint, endPoint, isstatic, yes) {
         var arrdens = arrs.length / maxlen;
         //arrow velocity
         var arrvel = maxlen/8000;
-        var arrtime = dist / arrvel;
+        var arrtime = currentLineLength / arrvel;
 
         //required number of arrows
-        var arrcount = arrdens * dist;
+        var arrcount = Math.round(arrdens * currentLineLength);
 
-        console.log("arrcount " + arrcount);
+        console.log("Values for animation:\nArrow Velocity is " + arrvel + "\n" +
+            "Arrow Time is " + arrtime + "\n" +
+            "Path length is " + currentLineLength + "\n" +
+            "Nr of arrows is " + arrcount);
 
         //start animation
         //if (CSS && CSS.supports && CSS.supports('motion-offset', 0)) {
@@ -172,6 +175,8 @@ function drawConnection(svgDoc, startPoint, endPoint, isstatic, yes) {
                     //easing: 'ease-in',
                     delay: time * (i / arrcount)
                 });
+
+                console.log("Delay for " + i + ". arrow is " + time * (i / arrcount));
             }
         //} else {
         //    document.documentElement.className = 'no-motionpath';
