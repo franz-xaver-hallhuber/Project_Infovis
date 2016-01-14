@@ -93,6 +93,7 @@
                             return zeile.JAHR == "2012";
                         })
 
+
                         var eventArea = e.target;
                         var actuallyDrawStuff = true;
 
@@ -125,6 +126,8 @@
                             } else {
 
                                 console.log("Startpunkt innen");
+
+
 
                                 if(areaIsInnen(eventArea)){
                                     console.log("Endpunkt: innen");
@@ -195,7 +198,8 @@
                             selectedArea = eventArea;
                             startPoint = getCursorPosition(svgRoot, e);
                             console.log("id=\"" + e.target.id + "\" x=\"" + startPoint.x + "\" y=\"" + startPoint.y + "\"");
-                            toggleAnimation(false);
+                            //toggleAnimation(false);
+                            removeDivs();
 
 
                         }
@@ -209,7 +213,9 @@
                     removeById(svgRoot, "currentLine");
                     removeById(svgRoot, "currentLineShadow");
                     removeById(svgRoot, "movingCircle");
-                    toggleAnimation(false);
+//                    toggleAnimation(false);
+                    removeDivs();
+
                 }
 
 
@@ -231,60 +237,9 @@
 
 <object data="muenchen_exportiert.svg" type="image/svg+xml" id="alphasvg" style="float:left;"></object>
 <div id="info"></div>
-<arrows>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
+<div id="arrowContainer">
 
-</arrows>
+</div>
 
 
 </body>
