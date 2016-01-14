@@ -15,6 +15,24 @@
     }
 }
 
+@keyframes arrowmotionreverse {
+    0% {
+        opacity: 0;
+        motion-offset:100%;
+    }
+    1% {
+        opacity: 1;
+    }
+    99% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        motion-offset:0%;
+    }
+}
+
+
 .arrowstyle {
     fill: limegreen;
     stroke-width: 0;

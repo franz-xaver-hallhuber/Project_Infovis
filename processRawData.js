@@ -130,12 +130,12 @@ function getCleanedBinnenwanderung(data){
 
 
 
-function sortByJAHR(){
+function sortByINDIKATOR_WERT(){
     allDataCleaned.sort(function (a, b) {
-        if (a.JAHR > b.JAHR) {
+        if (a.INDIKATOR_WERT > b.INDIKATOR_WERT) {
             return 1;
         }
-        if (a.JAHR < b.JAHR) {
+        if (a.INDIKATOR_WERT < b.INDIKATOR_WERT) {
             return -1;
         }
         // a must be equal to b

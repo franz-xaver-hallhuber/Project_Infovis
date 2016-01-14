@@ -31,7 +31,7 @@ function addSvgs() {
         "</svg>")
 }
 
-function drawConnection(svgDoc, startPoint, endPoint, startAnimation) {
+function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInnen, value) {
 
 
     /*TODO:
@@ -143,8 +143,13 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation) {
         //max possible length is
         var maxlen = Math.sqrt(Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("width")),2) + Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("height")),2));
 
+
+        // Datensatz-Werte gehen von -25.1 bis 51.6
+        var mappedValue = map_range(Math.abs(value), 0, 40, 0.1, 1.9);
+        console.log(mappedValue);
+
         //arrow density
-        var arrdens = (arrs.length / maxlen) * 0.5;
+        var arrdens = (arrs.length / maxlen) * mappedValue;
         //arrow velocity
         var arrvel = maxlen/10000;
         var arrtime = currentLineLength / arrvel;
@@ -164,10 +169,16 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation) {
             for (var i = 0; i < arrcount; ++i) {
 
                 d3.select(arrs[i])
-                    .style("animation-name", "arrowmotion")
                     .style("animation-duration", arrtime + "ms")
                     .style("animation-delay", time * (i / arrcount) + "ms")
                  ;
+
+                // Value ist immer vom Stadtteil aus gesehen, Pfad ist vom Mausklick abhängig
+                if((value >= 0 && startIsInnen) || value < 0 && !startIsInnen){
+                    d3.select(arrs[i]).style("animation-name", "arrowmotion")
+                } else {
+                    d3.select(arrs[i]).style("animation-name", "arrowmotionreverse");
+                }
 
                 //var player = arrs[i].animate([
                 //    {motionOffset: '0%'},
@@ -261,4 +272,9 @@ function areaIsAussen(area){
 function areaIsInnen(area){
     return ($(area).parent().attr('id') === "Innerhalb Münchens")
 
+}
+
+
+function map_range(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
