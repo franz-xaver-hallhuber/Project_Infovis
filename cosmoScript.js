@@ -180,7 +180,7 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation) {
                 //    delay: time * (i / arrcount)
                 //});
 
-                console.log("Delay for " + i + ". arrow is " + time * (i / arrcount));
+                //console.log("Delay for " + i + ". arrow is " + time * (i / arrcount));
             }
         //} else {
         //    document.documentElement.className = 'no-motionpath';
@@ -246,4 +246,19 @@ function toggleAnimation() {
     $("style[id='dynCss']").remove();
     $(".arrow").removeAttr("style")
         .css("style","opacity:0;");
+}
+
+
+
+function areaIsAussen(area){
+
+    return ($(area).attr('id') === "Ausland")
+    || ($(area).attr('id') === "Übriges Bundesgebiet")
+    || ($(area).attr('id') === "Übriges Bayern")
+
+}
+
+function areaIsInnen(area){
+    return ($(area).parent().attr('id') === "Innerhalb Münchens")
+
 }

@@ -79,6 +79,10 @@
 
                     allAreas[i].addEventListener("click", function (e) {
 
+                        var allDataFromYear2012 = allDataCleaned.filter(function(zeile){
+                            return zeile.JAHR == "2012";
+                        })
+
                         var eventArea = e.target;
 
                         // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
@@ -100,6 +104,50 @@
 
                             // TODO Wenn selectedArea außen && eventArea innen
                             // --> suche Außenwanderung mit Stadtteil (eventArea) und Außenbereich (selectedArea)
+                            console.log($(selectedArea).attr('id'));
+                            if(areaIsAussen(selectedArea)){
+
+                                console.log("Startpunkt: außen")
+
+                                if(areaIsInnen(eventArea)){
+                                    console.log("Endpunkt: innen");
+
+                                    var shownData = allDataFromYear2012.filter(function(zeile){
+                                        return zeile.INDIKATOR_AUSPRAEGUNG == selectedArea.id
+                                                && zeile.NAME == eventArea.id;
+                                    });
+
+                                } else {
+                                    console.log("Endpunkt: außen");
+                                }
+
+                            } else {
+
+                                console.log("Startpunkt innen");
+
+                                if(areaIsInnen(eventArea)){
+                                    console.log("Endpunkt: innen");
+
+                                    var shownData = allDataFromYear2012.filter(function(zeile){
+                                        return zeile.INDIKATOR_AUSPRAEGUNG == $(eventArea).parent().attr('id')
+                                                && zeile.NAME == selectedArea.id;
+                                    })
+
+                                } else {
+                                    console.log("Endpunkt: außen");
+
+                                    var shownData = allDataFromYear2012.filter(function(zeile){
+                                        return zeile.INDIKATOR_AUSPRAEGUNG == eventArea.id
+                                                && zeile.NAME == selectedArea.id;
+                                    })
+
+                                }
+
+                            }
+
+                            console.log(shownData);
+
+
 
                             // TODO Wenn selectedArea innen && eventArea innen
                             // --> suche Binnenwanderung mit Stadtteil (selectedArea)
