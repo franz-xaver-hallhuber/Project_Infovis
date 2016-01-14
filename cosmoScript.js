@@ -73,26 +73,17 @@ function removeDivs() {
     $("style[id='dynCss']").remove();
 }
 
-function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInnen, valueRein, valueRaus, valueInd) {
+function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInnen, zeile) {
 
 
-    /*TODO:
-     * four lines required (from/to and their shadows)
-     * animate line direction (arrows etc)
-     * get lines' thickness from database
-     *
-     */
+
+
     var svgRoot = svgDoc.documentElement;
 
     var startx = startPoint.x;
     var starty = startPoint.y;
     var difx = startx - endPoint.x;
     var dify = starty - endPoint.y;
-
-    var dist = Math.sqrt((startx - endPoint.x) * (startx - endPoint.x) + (starty - endPoint.y) * (starty - endPoint.y));
-    var vel = 50; //velocity of moving animation, could indicate quantity
-    var dur = dist / vel;
-    //console.log(dist);
 
     //Bezier parameters for main line
     var xBez = (startx + endPoint.x) / 2 - 0.7 * difx;
@@ -145,6 +136,17 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
 
 
     if (startAnimation) {
+
+
+        var valueRein = zeile.BASISWERT_1;
+        var valueRaus = zeile.BASISWERT_2;
+        var valueInd = zeile.BASISWERT_1-zeile.BASISWERT_2;
+        console.log("Rein: "+valueRein);
+        console.log("Raus: "+valueRaus);
+        console.log("Ind: "+valueInd);
+
+
+
         //add manually to document head
         $("head").append("<style type='text/css' id='dynCss'>" +
             ".greenDiv {" +
@@ -164,9 +166,9 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
 
 
         // Datensatz-Werte gehen von -25.1 bis 51.6
-        var mappedRein = map_range(Math.abs(valueRein), 0, 40, 0.1, 1.9);
-        var mappedRaus = map_range(Math.abs(valueRaus), 0, 40, 0.1, 1.9);
-        var mappedTotal = map_range(valueInd, -25, 50, -2.9, 2.9);
+        var mappedRein = map_range(Math.abs(valueRein), 0, 4192, 0.1, 1.9);
+        var mappedRaus = map_range(Math.abs(valueRaus), 0, 4192, 0.1, 1.9);
+        var mappedTotal = map_range(valueInd, -3193, 3193, 0.1, 1.9);
 
         console.log("Input\tMapped\n" +
             + valueRein + "\t" + mappedRein + "\n" +
@@ -176,7 +178,7 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         //arrow density, default is currently 50
         var arrdens = (70 / maxlen);
         //arrow velocity
-        var arrvel = maxlen / 10000;
+        var arrvel = maxlen / 15000;
         //slower velocity for grey arrows
         var greyVel = maxlen / 35000;
 
