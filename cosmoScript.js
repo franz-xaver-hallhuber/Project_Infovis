@@ -73,13 +73,7 @@ function removeDivs() {
     $("style[id='dynCss']").remove();
 }
 
-function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInnen, zeile) {
-
-
-
-
-    var svgRoot = svgDoc.documentElement;
-
+function calculatePathPoints(startPoint, endPoint) {
     var startx = startPoint.x;
     var starty = startPoint.y;
     var difx = startx - endPoint.x;
@@ -105,10 +99,11 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         + " Q "
         + xBez + " " + yBez + " "
         + endPoint.x + " " + endPoint.y;
+    return {shadepath: shadepath, linepath: linepath};
+}
 
-    removeById(svgRoot, "currentLine");
-    removeById(svgRoot, "currentLineShadow");
 
+function drawStaticConnection(svgDoc, shadepath, linepath) {
 
     //draw shadow line
     d3.select(svgDoc).select("svg")
@@ -130,20 +125,35 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         .attr("pointer-events", "none")
         .attr("stroke-linecap", "round")
         .style("stroke", "white")
-        .style("opacity","0.5")
+        .style("opacity", "0.5")
         .style("stroke-width", "14")
         .style("fill", "none");
+}
 
 
-    if (startAnimation) {
+function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen, zeile) {
+
+    var svgRoot = svgDoc.documentElement;
+
+    var connection = calculatePathPoints(startPoint, endPoint);
+    var shadepath = connection.shadepath;
+    var linepath = connection.linepath;
+
+    removeById(svgRoot, "currentLine");
+    removeById(svgRoot, "currentLineShadow");
+
+    drawStaticConnection(svgDoc, shadepath, linepath);
 
 
-        var valueRein = zeile.BASISWERT_1;
-        var valueRaus = zeile.BASISWERT_2;
-        var valueInd = zeile.BASISWERT_1-zeile.BASISWERT_2;
-        console.log("Rein: "+valueRein);
-        console.log("Raus: "+valueRaus);
-        console.log("Ind: "+valueInd);
+    if (addAnimation) {
+
+
+        var zuzuege = zeile.BASISWERT_1;
+        var wegzuege = zeile.BASISWERT_2;
+        var differenz = zuzuege-wegzuege;
+        console.log("Rein: "+zuzuege);
+        console.log("Raus: "+wegzuege);
+        console.log("Ind: "+differenz);
 
 
 
@@ -166,14 +176,14 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
 
 
         // Datensatz-Werte gehen von -25.1 bis 51.6
-        var mappedRein = map_range(Math.abs(valueRein), 0, 4192, 0.1, 1.9);
-        var mappedRaus = map_range(Math.abs(valueRaus), 0, 4192, 0.1, 1.9);
-        var mappedTotal = map_range(valueInd, -3193, 3193, 0.1, 1.9);
+        var zuzuegeMapped = map_range(Math.abs(zuzuege), 0, 4192, 0.1, 1.9);
+        var wegzuegeMapped = map_range(Math.abs(wegzuege), 0, 4192, 0.1, 1.9);
+        var differenzMapped = map_range(differenz, -3193, 3193, 0.1, 1.9);
 
         console.log("Input\tMapped\n" +
-            + valueRein + "\t" + mappedRein + "\n" +
-            + valueRaus + "\t" + mappedRaus + "\n" +
-            + valueInd + "\t" + mappedTotal);
+            + zuzuege + "\t" + zuzuegeMapped + "\n" +
+            + wegzuege + "\t" + wegzuegeMapped + "\n" +
+            + differenz + "\t" + differenzMapped);
 
         //arrow density, default is currently 70
         var arrdens = (70 / maxlen);
@@ -187,9 +197,9 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         var greyarrtime = currentLineLength / greyVel;
 
         //required number of arrows
-        var greenArrCount = Math.round(arrdens * currentLineLength * mappedRein);
-        var redArrCount = Math.round(arrdens * currentLineLength * mappedRaus);
-        var greyArrCount = Math.round(arrdens * currentLineLength * Math.abs(mappedTotal));
+        var greenArrCount = Math.round(arrdens * currentLineLength * zuzuegeMapped);
+        var redArrCount = Math.round(arrdens * currentLineLength * wegzuegeMapped);
+        var greyArrCount = Math.round(arrdens * currentLineLength * Math.abs(differenzMapped));
 
         console.log(greenArrCount + "," + redArrCount + "," + greyArrCount);
 
@@ -198,14 +208,14 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         var redDir;
         var greyDir;
 
-        if ((valueInd >= 0 && startIsInnen) || valueInd < 0 && !startIsInnen) {
+        if ((differenz >= 0 && startIsInnen) || differenz < 0 && !startIsInnen) {
             greenDir = "reversemotion";
             redDir = "straightmotion";
-            greyDir = mappedTotal > 0 ? "reversemotion" : "straightmotion";
+            greyDir = differenz > 0 ? "reversemotion" : "straightmotion";
         } else {
             greenDir = "straightmotion";
             redDir = "reversemotion";
-            greyDir = mappedTotal > 0 ? "straightmotion" : "reversemotion";
+            greyDir = differenz > 0 ? "straightmotion" : "reversemotion";
         }
 
         //add required number of divs
