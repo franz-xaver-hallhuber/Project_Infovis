@@ -31,7 +31,7 @@ function addSvgs() {
         "</svg>")
 }
 
-function drawConnection(svgDoc, startPoint, endPoint, isstatic, factor) {
+function drawConnection(svgDoc, startPoint, endPoint, startAnimation) {
 
 
     /*TODO:
@@ -102,7 +102,7 @@ function drawConnection(svgDoc, startPoint, endPoint, isstatic, factor) {
         .style("fill", "none");
 
 
-    if(isstatic) {
+    if(startAnimation) {
         //moving dots
         var arrs = $(".arrow");
 

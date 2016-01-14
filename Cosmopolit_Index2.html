@@ -54,6 +54,11 @@
                 svgRoot.addEventListener("mousemove", function (e) {
                     if (startPoint && !endPoint)
                         drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e), false);
+
+                    // TODO checken, ob Verbindung möglich ist
+                    // z.B. soll Ausland -> Deutschland nicht die gehighlighted werden
+                    // Mauszeiger soll Kreuz werden, falls nicht möglich
+
                 });
 
 
@@ -62,6 +67,14 @@
 
                     allAreas[i].addEventListener("mouseover", function (e) {
                         svgRoot.getElementById("area-name").textContent = e.target.id;
+
+                        var areaInfo = allDataCleaned.filter(function(zeile){
+                            return zeile.NAME == e.target.id && zeile.JAHR === "2012";
+                        });
+
+
+
+
                     });
 
                     allAreas[i].addEventListener("click", function (e) {
@@ -77,14 +90,29 @@
                             removeById(svgRoot, "currentLineShadow");
                             removeById(svgRoot, "movingCircle");
                             toggleAnimation(false);
-                            console.log("fall1");
 
-                        } else if (selectedArea != null && endPoint == null) { //wenn bereits ein Element ausgewählt ist
+                        } else if (selectedArea && !endPoint) { //wenn bereits ein Element ausgewählt ist
+
                             endPoint = getCursorPosition(svgRoot, e);
-                            drawConnection(svgDoc, startPoint, endPoint, true); //wenn Endpunkt gesetzt ist bleibt der Pfad stehen, wird nur einmal gezeichnet
-                            //toggleAnimation(true);
-                            //svgRoot.getElementById("circleAnim").beginElement(); //animation wird gestartet
-                            console.log("fall2");
+
+                            // TODO Wenn selectedArea außen (Ausland, Deutschland, Bayern) && eventArea außen
+                            // --> nicht reagieren
+
+                            // TODO Wenn selectedArea außen && eventArea innen
+                            // --> suche Außenwanderung mit Stadtteil (eventArea) und Außenbereich (selectedArea)
+
+                            // TODO Wenn selectedArea innen && eventArea innen
+                            // --> suche Binnenwanderung mit Stadtteil (selectedArea)
+
+                            // TODO Wenn selectedArea innen && eventArea außen
+                            // --> suche Außenwanderung mit Stadtteil (selectedArea) und Außenbereich (eventArea)
+
+
+                            drawConnection(svgDoc, startPoint, endPoint, true); //Zeichne Pfad UND starte Animation
+
+
+
+
                         } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
 
                             toggleClass($(selectedArea), "selected");
@@ -100,7 +128,6 @@
                             console.log("id=\"" + e.target.id + "\" x=\"" + startPoint.x + "\" y=\"" + startPoint.y + "\"");
                             toggleAnimation(false);
 
-                            console.log("fall3");
 
                         }
                     });
@@ -122,7 +149,8 @@
 </head>
 <body>
 
-<object data="muenchen_exportiert.svg" type="image/svg+xml" id="alphasvg"></object>
+<object data="muenchen_exportiert.svg" type="image/svg+xml" id="alphasvg" style="float:left;"></object>
+<div id="info"></div>
 <arrows>
     <div class="arrow"></div>
     <div class="arrow"></div>

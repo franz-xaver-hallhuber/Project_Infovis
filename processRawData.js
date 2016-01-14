@@ -124,3 +124,26 @@ function getCleanedBinnenwanderung(data){
 
     return cleanedData;
 }
+
+
+
+
+
+
+function sortByJAHR(){
+    allDataCleaned.sort(function (a, b) {
+        if (a.JAHR > b.JAHR) {
+            return 1;
+        }
+        if (a.JAHR < b.JAHR) {
+            return -1;
+        }
+        // a must be equal to b
+        return 0;
+    });
+
+    for(var i = 0; i < allDataCleaned.length; i++){
+        console.log(allDataCleaned[i].JAHR);
+    }
+}
+
