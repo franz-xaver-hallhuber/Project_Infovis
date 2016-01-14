@@ -50,12 +50,12 @@ function addSvgs(greenreverse, redreverse, greyreverse) {
 
 function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir) {
     var container = $("#arrowContainer");
-    for (var i = 0; i < nrred; i++) {
+    for (var i = 0; i < nrgreen; i++) {
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "greenDiv");
         document.getElementById("arrowContainer").appendChild(newDiv);
     }
-    for (var i = 0; i < nrgreen; i++) {
+    for (var i = 0; i < nrred; i++) {
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "redDiv");
         container.append(newDiv);
@@ -175,13 +175,14 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
             + valueRaus + "\t" + mappedRaus + "\n" +
             + valueInd + "\t" + mappedTotal);
 
-        //arrow density, default is currently 50
+        //arrow density, default is currently 70
         var arrdens = (70 / maxlen);
-        //arrow velocity
+        //default arrow velocity
         var arrvel = maxlen / 15000;
         //slower velocity for grey arrows
         var greyVel = maxlen / 35000;
 
+        //time for one arrow to rush through
         var arrtime = currentLineLength / arrvel;
         var greyarrtime = currentLineLength / greyVel;
 
@@ -189,6 +190,8 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         var greenArrCount = Math.round(arrdens * currentLineLength * mappedRein);
         var redArrCount = Math.round(arrdens * currentLineLength * mappedRaus);
         var greyArrCount = Math.round(arrdens * currentLineLength * Math.abs(mappedTotal));
+
+        console.log(greenArrCount + "," + redArrCount + "," + greyArrCount);
 
         //determine motion direction
         var greenDir;
@@ -221,6 +224,7 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
                 .style("animation-duration", arrtime + "ms")
                 .style("animation-delay", arrtime * (i / greenArrCount) + "ms")
             ;
+            console.log("Zeit für grüner Pfeil " + i + ": " + arrtime * (i / greenArrCount));
         }
 
         for (var i = 0; i < redArrCount; i++) {
@@ -229,6 +233,7 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
                 .style("animation-duration", arrtime + "ms")
                 .style("animation-delay", arrtime * (i / redArrCount) + "ms")
             ;
+            console.log("Zeit für roter Pfeil " + i + ": " + arrtime * (i / redArrCount));
         }
 
         for (var i = 0; i < greyArrCount; i++) {
@@ -237,6 +242,7 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
                 .style("animation-duration", greyarrtime + "ms")
                 .style("animation-delay", greyarrtime * (i / greyArrCount) + "ms")
             ;
+            console.log("Zeit für grauer Pfeil " + i + ": " + arrtime * (i / greyArrCount));
         }
     }
 }
