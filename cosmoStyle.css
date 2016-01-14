@@ -83,7 +83,7 @@
 }
 
 .greenSvg {
-    fill: limegreen;
+    fill: darkgreen;
     stroke-width: 0;
 }
 
@@ -93,8 +93,9 @@
 }
 
 .greySvg {
-    fill: lightgrey;
+    fill: white;
     stroke-width: 0;
+    box-shadow: darkgrey;
 }
 
 .redDiv {
@@ -114,7 +115,7 @@
     z-index: 8;
     position: absolute;
     top: 142px;
-    left: -58px;
+    left: -62px;
     opacity:0;
     margin: 0 auto;
     will-change: transform;

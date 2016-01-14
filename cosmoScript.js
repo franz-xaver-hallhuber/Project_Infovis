@@ -25,22 +25,30 @@ function removeById(svgRoot, id) {
     }
 }
 
-function addSvgs() {
-    $(".greenDiv").append("" +
-        "<svg width='5' height='10' class='greenSvg' viewBox='0 0 50 100'>" +
-        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25' transform='rotate(180,25,25)'/>" +
-        "</svg>")
-    $(".redDiv").append("" +
-        "<svg width='5' height='10' class='redSvg' viewBox='0 -50 50 100'>" +
-        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25' />" +
-        "</svg>")
-    $(".greyDiv").append("" +
-        "<svg width='10' height='10' class='greySvg' viewBox='0 0 50 50'>" +
-        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25' />" +
-        "</svg>")
+function addSvgs(greenreverse, redreverse, greyreverse) {
+    var greenstring, redstring, greystring;
+
+    greenstring = "<svg width='7' height='14' class='greenSvg' viewBox='0 0 50 100'>" +
+        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25'";
+    if (greenreverse) greenstring += "transform='rotate(180,25,25)'";
+    greenstring += "/></svg>";
+
+    redstring = "<svg width='7' height='14' class='redSvg' viewBox='0 -50 50 100'>" +
+        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25'";
+    if (redreverse) redstring += "transform='rotate(180,25,25)'";
+    redstring += "/></svg>";
+
+    greystring = "<svg width='14' height='14' class='greySvg' viewBox='0 0 50 50'>" +
+        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25'";
+    if (greyreverse) greystring += "transform='rotate(180,25,25)'";
+    greystring += "/></svg>";
+
+    $(".greenDiv").append(greenstring);
+    $(".redDiv").append(redstring);
+    $(".greyDiv").append(greystring);
 }
 
-function addDivs(nrred, nrgreen, nrgrey) {
+function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir) {
     var container = $("#arrowContainer");
     for (var i = 0; i < nrred; i++) {
         var newDiv = document.createElement("div");
@@ -57,7 +65,7 @@ function addDivs(nrred, nrgreen, nrgrey) {
         newDiv.setAttribute("class", "greyDiv");
         container.append(newDiv);
     }
-    addSvgs();
+    addSvgs(greendir == "reversemotion", reddir == "reversemotion", greydir == "reversemotion");
 }
 
 function removeDivs() {
@@ -131,32 +139,12 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         .attr("pointer-events", "none")
         .attr("stroke-linecap", "round")
         .style("stroke", "white")
+        .style("opacity","0.5")
         .style("stroke-width", "14")
         .style("fill", "none");
 
 
     if (startAnimation) {
-        ////add path to div
-        ////with jQuery
-        //$(".arrow").css("motion-path",linepath);
-        //$(".arrow").css("width","7px");
-        //
-        ////with d3
-        //d3.selectAll($(".arrow"))
-        //    .style("motion-path",linepath)
-        //    .style("height","7px");
-        //
-        ////with .style element
-        //for(i=0; i<arrs.length;i++) {
-        //    arrs[i].style.motionPath = linepath;
-        //    arrs[i].style.borderRadius = "25%";
-        //}
-
-        ////trying to manipulate css file
-        //var stylesheet = document.styleSheets[0];
-        //stylesheet.insertRule(".arrow {background-color: red", 1);
-        //stylesheet.insertRule(".arrow {motion-path: path(" + linepath + ");",1);
-
         //add manually to document head
         $("head").append("<style type='text/css' id='dynCss'>" +
             ".greenDiv {" +
@@ -178,7 +166,7 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         // Datensatz-Werte gehen von -25.1 bis 51.6
         var mappedRein = map_range(Math.abs(valueRein), 0, 40, 0.1, 1.9);
         var mappedRaus = map_range(Math.abs(valueRaus), 0, 40, 0.1, 1.9);
-        var mappedTotal = map_range(valueInd, -25, 50, -1.9, 1.9);
+        var mappedTotal = map_range(valueInd, -25, 50, -2.9, 2.9);
 
         console.log("Input\tMapped\n" +
             + valueRein + "\t" + mappedRein + "\n" +
@@ -190,7 +178,7 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         //arrow velocity
         var arrvel = maxlen / 10000;
         //slower velocity for grey arrows
-        var greyVel = maxlen / 15000;
+        var greyVel = maxlen / 35000;
 
         var arrtime = currentLineLength / arrvel;
         var greyarrtime = currentLineLength / greyVel;
@@ -199,14 +187,6 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         var greenArrCount = Math.round(arrdens * currentLineLength * mappedRein);
         var redArrCount = Math.round(arrdens * currentLineLength * mappedRaus);
         var greyArrCount = Math.round(arrdens * currentLineLength * Math.abs(mappedTotal));
-
-        //add required number of divs
-        addDivs(greenArrCount, redArrCount, greyArrCount);
-
-        //select divs
-        var greenArrs = $(".greenDiv");
-        var redArrs = $(".redDiv");
-        var greyArrs = $(".greyDiv");
 
         //determine motion direction
         var greenDir;
@@ -222,6 +202,14 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
             redDir = "reversemotion";
             greyDir = mappedTotal > 0 ? "straightmotion" : "reversemotion";
         }
+
+        //add required number of divs
+        addDivs(greenArrCount, redArrCount, greyArrCount, greenDir, redDir, greyDir);
+
+        //select divs
+        var greenArrs = $(".greenDiv");
+        var redArrs = $(".redDiv");
+        var greyArrs = $(".greyDiv");
 
         //equip divs with animation data
         for (var i = 0; i < greenArrCount; ++i) {
