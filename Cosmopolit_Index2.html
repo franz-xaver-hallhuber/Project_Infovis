@@ -73,6 +73,16 @@
                         });
 
 
+                        if(selectedArea){
+
+                            if(areaIsAussen(selectedArea)){
+                                if(areaIsAussen(e.target)){
+                                    e.target.style.cursor="not-allowed";
+                                }
+                            }
+
+                        }
+
 
 
                     });
@@ -85,22 +95,15 @@
 
 
                         var eventArea = e.target;
+                        var actuallyDrawStuff = true;
 
                         // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
                         if ($(selectedArea)[0] === $(eventArea)[0]) {
-                            toggleClass($(selectedArea), "selected");
-                            selectedArea = null;
-                            startPoint = null;
-                            removeById(svgRoot, "currentLine");
-                            removeById(svgRoot, "currentLineShadow");
-                            removeById(svgRoot, "movingCircle");
-                            //toggleAnimation(false);
-                            removeDivs();
+                            deletePath();
 
                         } else if (selectedArea && !endPoint) { //wenn bereits ein Element ausgewählt ist
 
                             endPoint = getCursorPosition(svgRoot, e);
-                            var shownData;
 
                             if(areaIsAussen(selectedArea)){
 
@@ -109,13 +112,15 @@
                                 if(areaIsInnen(eventArea)){
                                     console.log("Endpunkt: innen");
 
-                                    shownData = allDataFromYear2012.filter(function(zeile){
+                                    var shownData = allDataFromYear2012.filter(function(zeile){
                                         return zeile.INDIKATOR_AUSPRAEGUNG == selectedArea.id
                                                 && zeile.NAME == eventArea.id;
                                     });
 
                                 } else {
                                     console.log("Endpunkt: außen");
+                                    actuallyDrawStuff = false;
+                                    deletePath();
                                 }
 
                             } else {
@@ -127,7 +132,7 @@
                                 if(areaIsInnen(eventArea)){
                                     console.log("Endpunkt: innen");
 
-                                    shownData = allDataFromYear2012.filter(function(zeile){
+                                    var shownData = allDataFromYear2012.filter(function(zeile){
                                         return zeile.INDIKATOR_AUSPRAEGUNG == $(eventArea).parent().attr('id')
                                                 && zeile.NAME == selectedArea.id;
                                     })
@@ -135,7 +140,7 @@
                                 } else {
                                     console.log("Endpunkt: außen");
 
-                                    shownData = allDataFromYear2012.filter(function(zeile){
+                                    var shownData = allDataFromYear2012.filter(function(zeile){
                                         return zeile.INDIKATOR_AUSPRAEGUNG == eventArea.id
                                                 && zeile.NAME == selectedArea.id;
                                     })
@@ -144,32 +149,38 @@
 
                             }
 
-                            console.log(shownData);
+                            if(actuallyDrawStuff){
 
-                            var value = shownData[0].INDIKATOR_WERT;
 
-                            console.log(value);
+                                console.log(shownData);
 
-                            var sortedData = allDataFromYear2012.sort(function(a,b){
-                                if (parseFloat(a.INDIKATOR_WERT) > parseFloat(b.INDIKATOR_WERT)) {
-                                    return 1;
+                                var value = shownData[0].INDIKATOR_WERT;
+
+                                console.log(value);
+
+                                var sortedData = allDataFromYear2012.sort(function(a,b){
+                                    if (parseFloat(a.INDIKATOR_WERT) > parseFloat(b.INDIKATOR_WERT)) {
+                                        return 1;
+                                    }
+                                    if (parseFloat(a.INDIKATOR_WERT) < parseFloat(b.INDIKATOR_WERT)) {
+                                        return -1;
+                                    }
+                                    // a must be equal to b
+                                    return 0;
+                                });
+
+                                for(var i = 0; i < sortedData.length; i++){
+                                    console.log(sortedData[i].INDIKATOR_WERT);
                                 }
-                                if (parseFloat(a.INDIKATOR_WERT) < parseFloat(b.INDIKATOR_WERT)) {
-                                    return -1;
-                                }
-                                // a must be equal to b
-                                return 0;
-                            });
-
-                            for(var i = 0; i < sortedData.length; i++){
-                                console.log(sortedData[i].INDIKATOR_WERT);
-                            }
 //                            console.log(sortedData);
-                            console.log(sortedData[0]);
-                            console.log(sortedData[sortedData.length-1]);
+                                console.log(sortedData[0]);
+                                console.log(sortedData[sortedData.length-1]);
 
+                                console.log(actuallyDrawStuff);
 
                             drawConnection(svgDoc, startPoint, endPoint, true, areaIsInnen(selectedArea), value, value, value); //Zeichne Pfad UND starte Animation
+
+                            }
 
 
 
@@ -194,6 +205,19 @@
                         }
                     });
                 }
+
+                function deletePath(){
+                    toggleClass($(selectedArea), "selected");
+                    selectedArea = null;
+                    startPoint = null;
+                    removeById(svgRoot, "currentLine");
+                    removeById(svgRoot, "currentLineShadow");
+                    removeById(svgRoot, "movingCircle");
+//                    toggleAnimation(false);
+                    removeDivs();
+
+                }
+
 
             }, false);
         })
