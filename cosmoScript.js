@@ -173,7 +173,7 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
                     .style("animation-delay", time * (i / arrcount) + "ms")
                  ;
 
-                // Value ist immer vom Stadtteil aus gesehen, Pfad ist vom Mausklick abhängig
+                // Value ist immer vom Stadtteil aus gesehen, Pfad ist vom Mausklick ah
                 if((value >= 0 && startIsInnen) || value < 0 && !startIsInnen){
                     d3.select(arrs[i]).style("animation-name", "arrowmotion")
                 } else {
