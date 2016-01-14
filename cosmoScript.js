@@ -1,23 +1,24 @@
-function toggleClass(element, value){
+function toggleClass(element, value) {
 
-element.attr("class", function(index, classNames){
+    element.attr("class", function (index, classNames) {
 
         // toggle if element is selected or not
-        if(classNames.indexOf(value) > -1){
+        if (classNames.indexOf(value) > -1) {
             return classNames.replace(value, '');
         } else {
-            return classNames + " "+value;
+            return classNames + " " + value;
         }
     });
 }
 
-function getCursorPosition(svgRoot, e){
+function getCursorPosition(svgRoot, e) {
     var pt = svgRoot.createSVGPoint();
-    pt.x = e.clientX; pt.y = e.clientY;
+    pt.x = e.clientX;
+    pt.y = e.clientY;
     return pt.matrixTransform(svgRoot.getScreenCTM().inverse());
 }
 
-function removeById(svgRoot, id){
+function removeById(svgRoot, id) {
     var cL = svgRoot.getElementById(id);
     if (cL) {
         cL.parentNode.removeChild(cL);
@@ -33,18 +34,27 @@ function addSvgs() {
         "<svg width='5' height='10' class='redSvg' viewBox='0 -50 50 100'>" +
         "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25' />" +
         "</svg>")
+    $(".greyDiv").append("" +
+        "<svg width='10' height='10' class='greySvg' viewBox='0 0 50 50'>" +
+        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25' />" +
+        "</svg>")
 }
 
-function addDivs(nrred,nrgreen) {
+function addDivs(nrred, nrgreen, nrgrey) {
     var container = $("#arrowContainer");
-    for (var i=0;i<nrred;i++) {
+    for (var i = 0; i < nrred; i++) {
         var newDiv = document.createElement("div");
-        newDiv.setAttribute("class","greenDiv");
+        newDiv.setAttribute("class", "greenDiv");
         document.getElementById("arrowContainer").appendChild(newDiv);
     }
-    for(var i=0;i<nrgreen;i++) {
+    for (var i = 0; i < nrgreen; i++) {
         var newDiv = document.createElement("div");
-        newDiv.setAttribute("class","redDiv");
+        newDiv.setAttribute("class", "redDiv");
+        container.append(newDiv);
+    }
+    for (var i = 0; i < nrgrey; i++) {
+        var newDiv = document.createElement("div");
+        newDiv.setAttribute("class", "greyDiv");
         container.append(newDiv);
     }
     addSvgs();
@@ -55,16 +65,16 @@ function removeDivs() {
     $("style[id='dynCss']").remove();
 }
 
-function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInnen, value) {
+function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInnen, valueRein, valueRaus, valueInd) {
 
 
     /*TODO:
-    * four lines required (from/to and their shadows)
-    * animate line direction (arrows etc)
-    * get lines' thickness from database
-    *
-    */
-    var svgRoot  = svgDoc.documentElement;
+     * four lines required (from/to and their shadows)
+     * animate line direction (arrows etc)
+     * get lines' thickness from database
+     *
+     */
+    var svgRoot = svgDoc.documentElement;
 
     var startx = startPoint.x;
     var starty = startPoint.y;
@@ -86,20 +96,19 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
 
     //assemble paths
     var shadepath = "M "
-    + endPoint.x + " " + endPoint.y
-    + " Q "
-    + xBez2 + " " + yBez2 + " "
-    + startx + " " + starty;
+        + endPoint.x + " " + endPoint.y
+        + " Q "
+        + xBez2 + " " + yBez2 + " "
+        + startx + " " + starty;
 
     var linepath = "M "
-    + startx + " " + starty
-    + " Q "
-    + xBez + " " + yBez + " "
-    + endPoint.x + " " + endPoint.y;
+        + startx + " " + starty
+        + " Q "
+        + xBez + " " + yBez + " "
+        + endPoint.x + " " + endPoint.y;
 
     removeById(svgRoot, "currentLine");
     removeById(svgRoot, "currentLineShadow");
-
 
 
     //draw shadow line
@@ -120,13 +129,13 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         .attr("d", linepath)
         .attr("id", "currentLine")
         .attr("pointer-events", "none")
-        .attr("stroke-linecap","round")
+        .attr("stroke-linecap", "round")
         .style("stroke", "white")
         .style("stroke-width", "14")
         .style("fill", "none");
 
 
-    if(startAnimation) {
+    if (startAnimation) {
         ////add path to div
         ////with jQuery
         //$(".arrow").css("motion-path",linepath);
@@ -153,8 +162,9 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
             ".greenDiv {" +
             "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
             ".redDiv {" +
-            "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}" +
-
+            "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
+            ".greyDiv {" +
+            "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
             "</style>");
 
 
@@ -162,137 +172,94 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         var currentLineLength = svgDoc.getElementById("currentLine").getTotalLength();
 
         //max possible length is
-        var maxlen = Math.sqrt(Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("width")),2) + Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("height")),2));
+        var maxlen = Math.sqrt(Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("width")), 2) + Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("height")), 2));
+
 
         // Datensatz-Werte gehen von -25.1 bis 51.6
-        var mappedValue = map_range(Math.abs(value), 0, 40, 0.1, 1.9);
-        console.log(mappedValue);
+        var mappedRein = map_range(Math.abs(valueRein), 0, 40, 0.1, 1.9);
+        var mappedRaus = map_range(Math.abs(valueRaus), 0, 40, 0.1, 1.9);
+        var mappedTotal = map_range(valueInd, -25, 50, -1.9, 1.9);
+
+        console.log("Input\tMapped\n" +
+            + valueRein + "\t" + mappedRein + "\n" +
+            + valueRaus + "\t" + mappedRaus + "\n" +
+            + valueInd + "\t" + mappedTotal);
 
         //arrow density, default is currently 50
-        var arrdens = (70 / maxlen) * mappedValue;
+        var arrdens = (70 / maxlen);
         //arrow velocity
-        var arrvel = maxlen/10000;
+        var arrvel = maxlen / 10000;
+        //slower velocity for grey arrows
+        var greyVel = maxlen / 15000;
+
         var arrtime = currentLineLength / arrvel;
+        var greyarrtime = currentLineLength / greyVel;
 
         //required number of arrows
-        var arrcount = Math.round(arrdens * currentLineLength);
-        console.log("arrcount"+arrcount);
+        var greenArrCount = Math.round(arrdens * currentLineLength * mappedRein);
+        var redArrCount = Math.round(arrdens * currentLineLength * mappedRaus);
+        var greyArrCount = Math.round(arrdens * currentLineLength * Math.abs(mappedTotal));
 
-        //required density for red and green arrows
-        var reddens = 1;
-        var greendens = mappedValue;
+        //add required number of divs
+        addDivs(greenArrCount, redArrCount, greyArrCount);
 
-        addDivs(arrcount,arrcount);
-
+        //select divs
         var greenArrs = $(".greenDiv");
         var redArrs = $(".redDiv");
+        var greyArrs = $(".greyDiv");
 
-        //console.log("Values for animation:\nArrow Velocity is " + arrvel + "\n" +
-        //    "Arrow Time is " + arrtime + "\n" +
-        //    "Path length is " + currentLineLength + "\n" +
-        //    "Nr of arrows is " + arrcount);
+        //determine motion direction
+        var greenDir;
+        var redDir;
+        var greyDir;
 
-        //start animation
-        //if (CSS && CSS.supports && CSS.supports('motion-offset', 0)) {
+        if ((valueInd >= 0 && startIsInnen) || valueInd < 0 && !startIsInnen) {
+            greenDir = "reversemotion";
+            redDir = "straightmotion";
+            greyDir = mappedTotal > 0 ? "reversemotion" : "straightmotion";
+        } else {
+            greenDir = "straightmotion";
+            redDir = "reversemotion";
+            greyDir = mappedTotal > 0 ? "straightmotion" : "reversemotion";
+        }
 
-        //len will be dependant on the path length
-            for (var i = 0; i < arrcount; ++i) {
+        //equip divs with animation data
+        for (var i = 0; i < greenArrCount; ++i) {
 
-                d3.select(greenArrs[i])
-                    .style("animation-name", "greenarrowmotion")
-                    .style("animation-duration", arrtime + "ms")
-                    .style("animation-delay", arrtime * (i / arrcount) + "ms")
-                 ;
+            d3.select(greenArrs[i])
+                .style("animation-name", greenDir)
+                .style("animation-duration", arrtime + "ms")
+                .style("animation-delay", arrtime * (i / greenArrCount) + "ms")
+            ;
+        }
 
-                d3.select(redArrs[i])
-                    .style("animation-name", "redarrowmotion")
-                    .style("animation-duration", arrtime + "ms")
-                    .style("animation-delay", arrtime * (i / arrcount) + "ms")
-                ;
+        for (var i = 0; i < redArrCount; i++) {
+            d3.select(redArrs[i])
+                .style("animation-name", redDir)
+                .style("animation-duration", arrtime + "ms")
+                .style("animation-delay", arrtime * (i / redArrCount) + "ms")
+            ;
+        }
 
-                // Value ist immer vom Stadtteil aus gesehen, Pfad ist vom Mausklick ah
-                if((value >= 0 && startIsInnen) || value < 0 && !startIsInnen){
-                    d3.select(greenArrs[i]).style("animation-name", "greenarrowmotion");
-                    d3.select(redArrs[i]).style("animation-name","redarrowmotion");
-                } else {
-                    d3.select(greenArrs[i]).style("animation-name", "redarrowmotion");
-                    d3.select(redArrs[i]).style("animation-name", "greenarrowmotion");
-                }
-
-                //var player = arrs[i].animate([
-                //    {motionOffset: '0%'},
-                //    {motionOffset: '100%'}
-                //], {
-                //    duration: time,
-                //    iterations: Infinity,
-                //    fill: 'both',
-                //    //easing: 'ease-in',
-                //    delay: time * (i / arrcount)
-                //});
-
-                //console.log("Delay for " + i + ". arrow is " + time * (i / arrcount));
-            }
-        //} else {
-        //    document.documentElement.className = 'no-motionpath';
-        //}
-
-
-        //removeById(svgRoot, "movingCircle");
-        //
-        //d3.select(svgDoc).select("svg")
-        //    .append("circle")
-        //    .attr("id", "movingCircle")
-        //    .attr("r", "7")
-        //    .attr("fill", "white")
-        //    .attr("opacity", "0.5")
-        //    .attr("y", "-7")
-        //    .append("animateMotion")
-        //    .attr("id", "circleAnim")
-        //    .attr("dur", dur + "s")
-        //    .attr("repeatCount", "indefinite")
-        //    .attr("rotate", "auto")
-        //    .attr("begin","indefinite")
-        //    .append("mpath")
-        //    .attr("xlink:href", "#currentLine");
+        for (var i = 0; i < greyArrCount; i++) {
+            d3.select(greyArrs[i])
+                .style("animation-name", greyDir)
+                .style("animation-duration", greyarrtime + "ms")
+                .style("animation-delay", greyarrtime * (i / greyArrCount) + "ms")
+            ;
+        }
     }
-    //                        d3.select(svgDoc).select("svg")
-//                                .append("circle")
-//                                .attr("cx", xBez)
-//                                .attr("cy", yBez)
-//                                .attr("r", 5)
-//                            .style("fill", "purple");
-
-
-//                        var svgSelection = d3.select("svg");
-//                        svgSelection.append("circle")
-//                                .attr("cx", 25)
-//                                .attr("cy", 25)
-//                                .attr("r", 2500)
-//                                .style("fill", "purple");
-
-//                        var bodySelection = d3.select("body");
-//                        console.log(bodySelection);
-
-//                        var svgSelection = bodySelection.append("svg")
-//                                                        .attr("width", 50)
-//                                                        .attr("height", 50);
-
-//                        console.log(svgDoc);
-//                        console.log(svgRoot);
-
-
-
 }
 
-function areaIsAussen(area){
+function areaIsAussen(area) {
 
     return ($(area).attr('id') === "Ausland")
-    || ($(area).attr('id') === "Übriges Bundesgebiet")
-    || ($(area).attr('id') === "Übriges Bayern")
+        || ($(area).attr('id') === "Übriges Bundesgebiet")
+        || ($(area).attr('id') === "Übriges Bayern")
 
 }
 
-function areaIsInnen(area){
+function areaIsInnen(area) {
     return ($(area).parent().attr('id') === "Innerhalb Münchens")
 
 }
