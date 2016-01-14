@@ -83,6 +83,7 @@
                             return zeile.JAHR == "2012";
                         })
 
+
                         var eventArea = e.target;
 
                         // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
@@ -93,11 +94,13 @@
                             removeById(svgRoot, "currentLine");
                             removeById(svgRoot, "currentLineShadow");
                             removeById(svgRoot, "movingCircle");
-                            toggleAnimation(false);
+                            //toggleAnimation(false);
+                            removeDivs();
 
                         } else if (selectedArea && !endPoint) { //wenn bereits ein Element ausgewählt ist
 
                             endPoint = getCursorPosition(svgRoot, e);
+                            var shownData;
 
                             if(areaIsAussen(selectedArea)){
 
@@ -106,7 +109,7 @@
                                 if(areaIsInnen(eventArea)){
                                     console.log("Endpunkt: innen");
 
-                                    var shownData = allDataFromYear2012.filter(function(zeile){
+                                    shownData = allDataFromYear2012.filter(function(zeile){
                                         return zeile.INDIKATOR_AUSPRAEGUNG == selectedArea.id
                                                 && zeile.NAME == eventArea.id;
                                     });
@@ -119,10 +122,12 @@
 
                                 console.log("Startpunkt innen");
 
+
+
                                 if(areaIsInnen(eventArea)){
                                     console.log("Endpunkt: innen");
 
-                                    var shownData = allDataFromYear2012.filter(function(zeile){
+                                    shownData = allDataFromYear2012.filter(function(zeile){
                                         return zeile.INDIKATOR_AUSPRAEGUNG == $(eventArea).parent().attr('id')
                                                 && zeile.NAME == selectedArea.id;
                                     })
@@ -130,7 +135,7 @@
                                 } else {
                                     console.log("Endpunkt: außen");
 
-                                    var shownData = allDataFromYear2012.filter(function(zeile){
+                                    shownData = allDataFromYear2012.filter(function(zeile){
                                         return zeile.INDIKATOR_AUSPRAEGUNG == eventArea.id
                                                 && zeile.NAME == selectedArea.id;
                                     })
@@ -182,7 +187,8 @@
                             selectedArea = eventArea;
                             startPoint = getCursorPosition(svgRoot, e);
                             console.log("id=\"" + e.target.id + "\" x=\"" + startPoint.x + "\" y=\"" + startPoint.y + "\"");
-                            toggleAnimation(false);
+                            //toggleAnimation(false);
+                            removeDivs();
 
 
                         }
@@ -207,60 +213,9 @@
 
 <object data="muenchen_exportiert.svg" type="image/svg+xml" id="alphasvg" style="float:left;"></object>
 <div id="info"></div>
-<arrows>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
-    <div class="arrow"></div>
+<div id="arrowContainer">
 
-</arrows>
+</div>
 
 
 </body>

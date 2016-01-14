@@ -1,4 +1,21 @@
-@keyframes arrowmotion {
+@keyframes greenarrowmotion {
+     0% {
+         opacity: 0;
+         motion-offset:100%;
+     }
+     1% {
+         opacity: 1;
+     }
+     99% {
+         opacity: 1;
+     }
+     100% {
+         opacity: 0;
+         motion-offset:0%;
+     }
+ }
+
+@keyframes redarrowmotion {
     0% {
         opacity: 0;
         motion-offset:0%;
@@ -13,29 +30,6 @@
         opacity: 0;
         motion-offset:100%;
     }
-}
-
-@keyframes arrowmotionreverse {
-    0% {
-        opacity: 0;
-        motion-offset:100%;
-    }
-    1% {
-        opacity: 1;
-    }
-    99% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-        motion-offset:0%;
-    }
-}
-
-
-.arrowstyle {
-    fill: limegreen;
-    stroke-width: 0;
 }
 
 .area.ausland {
@@ -75,15 +69,38 @@
     fill: orange;
 }
 
-.arrow {
+.greenDiv {
     z-index: 10;
     position: absolute;
     top: 142px;
-    left: -62px;
+    left: -58px;
     opacity:0;
     margin: 0 auto;
     will-change: transform;
     animation-iteration-count: infinite;
     -webkit-animation-timing-function: linear;
+    max-height: 14px;
 }
 
+.greenSvg {
+    fill: limegreen;
+    stroke-width: 0;
+}
+
+.redSvg {
+    fill: crimson;
+    stroke-width: 0;
+}
+
+.redDiv {
+    z-index: 9;
+    position: absolute;
+    top: 142px;
+    left: -58px;
+    opacity:0;
+    margin: 0 auto;
+    will-change: transform;
+    animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    max-height: 14px;
+}

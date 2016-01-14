@@ -25,10 +25,34 @@ function removeById(svgRoot, id){
 }
 
 function addSvgs() {
-    $(".arrow").append("" +
-        "<svg id='arrow' class='arrowstyle' viewBox='-50 -25 50 50'>" +
-        "<polygon points='-50,-25 -25,-25 0,0 -25,25 -50,25 -25,0' />" +
+    $(".greenDiv").append("" +
+        "<svg width='5' height='10' class='greenSvg' viewBox='0 0 50 100'>" +
+        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25' transform='rotate(180,25,25)'/>" +
         "</svg>")
+    $(".redDiv").append("" +
+        "<svg width='5' height='10' class='redSvg' viewBox='0 -50 50 100'>" +
+        "<polygon points='0,0 25,0 50,25 25,50 0,50 25,25' />" +
+        "</svg>")
+}
+
+function addDivs(nrred,nrgreen) {
+    var container = $("#arrowContainer");
+    for (var i=0;i<nrred;i++) {
+        var newDiv = document.createElement("div");
+        newDiv.setAttribute("class","greenDiv");
+        document.getElementById("arrowContainer").appendChild(newDiv);
+    }
+    for(var i=0;i<nrgreen;i++) {
+        var newDiv = document.createElement("div");
+        newDiv.setAttribute("class","redDiv");
+        container.append(newDiv);
+    }
+    addSvgs();
+}
+
+function removeDivs() {
+    $("#arrowContainer").empty();
+    $("style[id='dynCss']").remove();
 }
 
 function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInnen, value) {
@@ -103,10 +127,6 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
 
 
     if(startAnimation) {
-        //moving dots
-        var arrs = $(".arrow");
-
-
         ////add path to div
         ////with jQuery
         //$(".arrow").css("motion-path",linepath);
@@ -129,33 +149,43 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
         //stylesheet.insertRule(".arrow {motion-path: path(" + linepath + ");",1);
 
         //add manually to document head
-        $("head").append("<style type='text/css' id='dynCss'>.arrow {/*noinspection CssInvalidFunction*/motion-path: path(\"" +
-            linepath + "\");" +
-            "width: 14px;" +
-            "height: 14px;}</style>");
+        $("head").append("<style type='text/css' id='dynCss'>" +
+            ".greenDiv {" +
+            "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
+            ".redDiv {" +
+            "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}" +
+
+            "</style>");
 
 
         // length of the currentLine
         var currentLineLength = svgDoc.getElementById("currentLine").getTotalLength();
 
-
-
         //max possible length is
         var maxlen = Math.sqrt(Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("width")),2) + Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("height")),2));
-
 
         // Datensatz-Werte gehen von -25.1 bis 51.6
         var mappedValue = map_range(Math.abs(value), 0, 40, 0.1, 1.9);
         console.log(mappedValue);
 
-        //arrow density
-        var arrdens = (arrs.length / maxlen) * mappedValue;
+        //arrow density, default is currently 50
+        var arrdens = (70 / maxlen) * mappedValue;
         //arrow velocity
         var arrvel = maxlen/10000;
         var arrtime = currentLineLength / arrvel;
 
         //required number of arrows
         var arrcount = Math.round(arrdens * currentLineLength);
+        console.log("arrcount"+arrcount);
+
+        //required density for red and green arrows
+        var reddens = 1;
+        var greendens = mappedValue;
+
+        addDivs(arrcount,arrcount);
+
+        var greenArrs = $(".greenDiv");
+        var redArrs = $(".redDiv");
 
         //console.log("Values for animation:\nArrow Velocity is " + arrvel + "\n" +
         //    "Arrow Time is " + arrtime + "\n" +
@@ -164,20 +194,29 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
 
         //start animation
         //if (CSS && CSS.supports && CSS.supports('motion-offset', 0)) {
-            var time = arrtime;
+
         //len will be dependant on the path length
             for (var i = 0; i < arrcount; ++i) {
 
-                d3.select(arrs[i])
+                d3.select(greenArrs[i])
+                    .style("animation-name", "greenarrowmotion")
                     .style("animation-duration", arrtime + "ms")
-                    .style("animation-delay", time * (i / arrcount) + "ms")
+                    .style("animation-delay", arrtime * (i / arrcount) + "ms")
                  ;
+
+                d3.select(redArrs[i])
+                    .style("animation-name", "redarrowmotion")
+                    .style("animation-duration", arrtime + "ms")
+                    .style("animation-delay", arrtime * (i / arrcount) + "ms")
+                ;
 
                 // Value ist immer vom Stadtteil aus gesehen, Pfad ist vom Mausklick ah
                 if((value >= 0 && startIsInnen) || value < 0 && !startIsInnen){
-                    d3.select(arrs[i]).style("animation-name", "arrowmotion")
+                    d3.select(greenArrs[i]).style("animation-name", "greenarrowmotion");
+                    d3.select(redArrs[i]).style("animation-name","redarrowmotion");
                 } else {
-                    d3.select(arrs[i]).style("animation-name", "arrowmotionreverse");
+                    d3.select(greenArrs[i]).style("animation-name", "redarrowmotion");
+                    d3.select(redArrs[i]).style("animation-name", "greenarrowmotion");
                 }
 
                 //var player = arrs[i].animate([
@@ -244,22 +283,6 @@ function drawConnection(svgDoc, startPoint, endPoint, startAnimation, startIsInn
 
 
 }
-
-function lineAnimation() {
-
-}
-
-function calculateDuration() {
-
-}
-
-function toggleAnimation() {
-    $("style[id='dynCss']").remove();
-    $(".arrow").removeAttr("style")
-        .css("style","opacity:0;");
-}
-
-
 
 function areaIsAussen(area){
 

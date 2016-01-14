@@ -5,58 +5,15 @@
     <title>The Munich Cosmopolit Index</title>
     <link rel="stylesheet" href="cosmoStyle.css">
 
-    <script type="text/javascript" src="cosmoScript.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<body style="background-color:greenyellow">
 
-
-    <script>
-        $(document).ready(function(){
-            console.log("doc ready");
-
-            var svg = document.getElementById("svgElement");
-            //window.addEventListener("load",function(){
-            //    console.log("svg loaded");
-            //var svgDoc = svg.contentDocument;
-                //var svgRoot = svgDoc.documentElement;
-
-
-
-            d3.select(svg)
-                    .append("rect")
-                    .attr("id","movingCircle")
-                    .attr("height","5")
-                    .attr("width","10")
-                    .attr("fill","white")
-                    .attr("opacity","0.5")
-                    .attr("y","-2.5")
-                    .append("animateMotion")
-                    .attr("id","circleAnim")
-                    .attr("dur","10s")
-                    .attr("repeatCount","indefinite")
-                    .attr("rotate","auto")
-                    .append("mpath")
-                    .attr("xlink:href","#animPath");
-
-            requestAnimationFrame(function() {
-
-            });
-
-            var anim = document.getElementById("circleAnim");
-
-            //});
-        });
-    </script>
-</head>
-<body>
-    <div id="svgcontainer">
-        <svg onload="console.log('svg loaded');" viewBox="0 0 500 500" id="svgElement">
-            <path id="animPath" d="M 10 10 H 50 q 100 0 100 100 " stroke="red" stroke-width="5" fill-opacity="0"/>
-        </svg>
+<div style="border:1px solid black">
+    <svg id="arrow" width="5" height="10" viewBox="0 0 50 100" style="border: solid 1px; position:absolute;">
+        <polygon points="0,0 25,0 50,25 25,50 0,50 25,25" style="fill: blue; stroke-width: 0" />
+    </svg>
+    <svg id="arrow" width="5" height="10" viewBox="0 -50 50 100" style="border: solid 1px; position:absolute;">
+        <polygon points="0,0 25,0 50,25 25,50 0,50 25,25" style="fill: blue; stroke-width: 0" transform="rotate(180,25,25)" />
+    </svg>
     </div>
-
-<svg id="arrow" viewBox="0 0 200 200">
-    <polygon points="0,0 25,0 50,25 25,50 0,50 25,25" style="fill: blue; stroke-width: 0" />
-</svg>
 </body>
 </html>
