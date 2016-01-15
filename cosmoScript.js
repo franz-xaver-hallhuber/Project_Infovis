@@ -43,6 +43,8 @@ function addSvgs(greenreverse, redreverse, greyreverse) {
     if (greyreverse) greystring += "transform='rotate(180,25,25)'";
     greystring += "/></svg>";
 
+    console.log(greyreverse);
+
     $(".greenDiv").append(greenstring);
     $(".redDiv").append(redstring);
     $(".greyDiv").append(greystring);
@@ -65,7 +67,7 @@ function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir) {
         newDiv.setAttribute("class", "greyDiv");
         container.append(newDiv);
     }
-    addSvgs(greendir == "reversemotion", reddir == "reversemotion", greydir == "reversemotion");
+    addSvgs(greendir == "reversemotion", reddir == "reversemotion", greydir == "greyreversemotion");
 }
 
 function removeDivs() {
@@ -178,7 +180,7 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         // Datensatz-Werte gehen von -25.1 bis 51.6
         var zuzuegeMapped = map_range(Math.abs(zuzuege), 0, 4192, 0.1, 1.9);
         var wegzuegeMapped = map_range(Math.abs(wegzuege), 0, 4192, 0.1, 1.9);
-        var differenzMapped = map_range(differenz, -3193, 3193, 0.1, 1.9);
+        var differenzMapped = map_range(differenz, -3193, 3193, -10, 10);
 
         console.log("Input\tMapped\n" +
             + zuzuege + "\t" + zuzuegeMapped + "\n" +
@@ -190,18 +192,18 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         //default arrow velocity
         var arrvel = maxlen / 15000;
         //slower velocity for grey arrows
-        var greyVel = maxlen / 35000;
+        var greyVel = Math.abs(arrvel * differenzMapped);
 
         //time for one arrow to rush through
         var arrtime = currentLineLength / arrvel;
         var greyarrtime = currentLineLength / greyVel;
 
         //required number of arrows
-        var greenArrCount = Math.round(arrdens * currentLineLength * zuzuegeMapped);
+        var greenArrCount = Math.round(arrdens * currentLineLength * Math.abs(zuzuegeMapped));
         var redArrCount = Math.round(arrdens * currentLineLength * wegzuegeMapped);
-        var greyArrCount = Math.round(arrdens * currentLineLength * Math.abs(differenzMapped));
+        var greyArrCount = Math.round(arrdens/4 * currentLineLength);
 
-        console.log(greenArrCount + "," + redArrCount + "," + greyArrCount);
+        //console.log(greenArrCount + "," + redArrCount + "," + greyArrCount);
 
         //determine motion direction
         var greenDir;
@@ -211,11 +213,11 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         if ((differenz >= 0 && startIsInnen) || differenz < 0 && !startIsInnen) {
             greenDir = "reversemotion";
             redDir = "straightmotion";
-            greyDir = differenz > 0 ? "reversemotion" : "straightmotion";
+            greyDir = differenz > 0 ? "greyreversemotion" : "greystraightmotion";
         } else {
             greenDir = "straightmotion";
             redDir = "reversemotion";
-            greyDir = differenz > 0 ? "straightmotion" : "reversemotion";
+            greyDir = differenz > 0 ? "greystraightmotion" : "greyreversemotion";
         }
 
         //add required number of divs
@@ -234,7 +236,7 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
                 .style("animation-duration", arrtime + "ms")
                 .style("animation-delay", arrtime * (i / greenArrCount) + "ms")
             ;
-            console.log("Zeit für grüner Pfeil " + i + ": " + arrtime * (i / greenArrCount));
+            //console.log("Zeit für grüner Pfeil " + i + ": " + arrtime * (i / greenArrCount));
         }
 
         for (var i = 0; i < redArrCount; i++) {
@@ -243,7 +245,7 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
                 .style("animation-duration", arrtime + "ms")
                 .style("animation-delay", arrtime * (i / redArrCount) + "ms")
             ;
-            console.log("Zeit für roter Pfeil " + i + ": " + arrtime * (i / redArrCount));
+            //console.log("Zeit für roter Pfeil " + i + ": " + arrtime * (i / redArrCount));
         }
 
         for (var i = 0; i < greyArrCount; i++) {
@@ -251,8 +253,9 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
                 .style("animation-name", greyDir)
                 .style("animation-duration", greyarrtime + "ms")
                 .style("animation-delay", greyarrtime * (i / greyArrCount) + "ms")
+                .style("animation-timing-function","cubic-bezier(0.1,0.5,0.9,0.5)")
             ;
-            console.log("Zeit für grauer Pfeil " + i + ": " + arrtime * (i / greyArrCount));
+            //console.log("Zeit für grauer Pfeil " + i + ": " + arrtime * (i / greyArrCount));
         }
     }
 }
