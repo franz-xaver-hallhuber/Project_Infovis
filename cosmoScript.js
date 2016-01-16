@@ -210,15 +210,25 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         var redDir;
         var greyDir;
 
-        if ((differenz >= 0 && startIsInnen) || differenz < 0 && !startIsInnen) {
+        if (startIsInnen) {
+           greenDir = "reversemotion";
+           redDir = "straightmotion";
+           greyDir = differenz > 0 ? "greyreversemotion" : "greystraightmotion";
+         } else {
+           greenDir = "straightmotion";
+           redDir = "reversemotion";
+           greyDir = differenz > 0 ? "greystraightmotion" : "greyreversemotion";
+        }
+
+       /* if ((differenz >= 0 && startIsInnen) || differenz < 0 && !startIsInnen) {
             greenDir = "reversemotion";
             redDir = "straightmotion";
-            greyDir = differenz > 0 ? "greyreversemotion" : "greystraightmotion";
+            greyDir = "greyreversemotion";
         } else {
             greenDir = "straightmotion";
             redDir = "reversemotion";
-            greyDir = differenz > 0 ? "greystraightmotion" : "greyreversemotion";
-        }
+            greyDir = "greystraightmotion";
+        }*/
 
         //add required number of divs
         addDivs(greenArrCount, redArrCount, greyArrCount, greenDir, redDir, greyDir);
