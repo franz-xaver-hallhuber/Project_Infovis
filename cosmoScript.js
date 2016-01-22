@@ -43,7 +43,7 @@ function removeById(svgRoot, id) {
     }
 }
 
-function addSvgs(greenreverse, redreverse, greyreverse) {
+function addSvgs(greenreverse, redreverse, greyreverse, forId) {
     var greenstring, redstring, greystring;
 
     greenstring = "<svg width='7' height='14' class='greenSvg' viewBox='0 0 50 100'>" +
@@ -61,36 +61,35 @@ function addSvgs(greenreverse, redreverse, greyreverse) {
     if (greyreverse) greystring += "transform='rotate(180,25,25)'";
     greystring += "/></svg>";
 
-    console.log(greyreverse);
-
-    $(".greenDiv").append(greenstring);
-    $(".redDiv").append(redstring);
-    $(".greyDiv").append(greystring);
+    $(".greenDiv." + forId).append(greenstring);
+    $(".redDiv." + forId).append(redstring);
+    $(".greyDiv." + forId).append(greystring);
 }
 
-function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir) {
+function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir, refId) {
     var container = $("#arrowContainer");
     for (var i = 0; i < nrgreen; i++) {
         var newDiv = document.createElement("div");
-        newDiv.setAttribute("class", "greenDiv");
+        newDiv.setAttribute("class", "greenDiv " + refId);
         document.getElementById("arrowContainer").appendChild(newDiv);
     }
     for (var i = 0; i < nrred; i++) {
         var newDiv = document.createElement("div");
-        newDiv.setAttribute("class", "redDiv");
+        newDiv.setAttribute("class", "redDiv " + refId);
         container.append(newDiv);
     }
     for (var i = 0; i < nrgrey; i++) {
         var newDiv = document.createElement("div");
-        newDiv.setAttribute("class", "greyDiv");
+        newDiv.setAttribute("class", "greyDiv " + refId);
         container.append(newDiv);
     }
-    addSvgs(greendir == "reversemotion", reddir == "reversemotion", greydir == "greyreversemotion");
+    addSvgs(greendir == "reversemotion", reddir == "reversemotion", greydir == "greyreversemotion", refId);
 }
 
-function removeDivs() {
-    $("#arrowContainer").empty();
-    $("style[id='dynCss']").remove();
+function removeDivs(ofId) {
+    $("."+ofId).remove();
+    $("#"+ofId).remove();
+    //$("style[id='dynCss']").remove();
 }
 
 function calculatePathPoints(startPoint, endPoint) {
@@ -130,8 +129,6 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
     var cLineID = "currentLine" + d3.select(svgDoc).selectAll(".currentLine").size();
     var cLineSID = "currentShadowLine" + d3.select(svgDoc).selectAll(".currentLineShadow").size();
 
-    console.log(d3.select(svgDoc).selectAll(".currentLine"));
-
     //draw shadow line
     d3.select(svgDoc).select("svg")
         .append("path")
@@ -164,6 +161,9 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
 
 function destroyMe(e) {
     e.preventDefault();
+    removeDivs(e.target.id);
+    //var svgDoc = document.getElementById("containerSVG").contentDocument;
+    var shadow = e.target.parentNode.removeChild(e.target.previousSibling);
     e.target.parentNode.removeChild(e.target);
 }
 
@@ -193,12 +193,12 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         console.log("Ind: "+differenz);
 
         //add manually to document head
-        $("head").append("<style type='text/css' id='dynCss'>" +
-            ".greenDiv {" +
+        $("head").append("<style type='text/css' id="+ currentID +">" +
+            ".greenDiv." + currentID + " {" +
             "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
-            ".redDiv {" +
+            ".redDiv." + currentID + " {" +
             "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
-            ".greyDiv {" +
+            ".greyDiv." + currentID + " {" +
             "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
             "</style>");
 
@@ -264,12 +264,12 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
          }*/
 
         //add required number of divs
-        addDivs(greenArrCount, redArrCount, greyArrCount, greenDir, redDir, greyDir);
+        addDivs(greenArrCount, redArrCount, greyArrCount, greenDir, redDir, greyDir, currentID);
 
         //select divs
-        var greenArrs = $(".greenDiv");
-        var redArrs = $(".redDiv");
-        var greyArrs = $(".greyDiv");
+        var greenArrs = $(".greenDiv." + currentID);
+        var redArrs = $(".redDiv." + currentID);
+        var greyArrs = $(".greyDiv." + currentID);
 
         //equip divs with animation data
         for (var i = 0; i < greenArrCount; ++i) {
@@ -301,6 +301,8 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
             //console.log("Zeit für grauer Pfeil " + i + ": " + arrtime * (i / greyArrCount));
         }
     }
+
+    return currentID;
 }
 
 function areaIsAussen(area) {
