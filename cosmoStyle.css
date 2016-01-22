@@ -132,7 +132,11 @@
 }
 
 .area.hovered {
-    fill: blue;
+    fill: steelblue;
+}
+
+.area.selected {
+    /*fill: orange;*/
 }
 /*.area.outside-m:hover {*/
     /*fill: steelblue;*/

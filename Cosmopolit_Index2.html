@@ -80,22 +80,39 @@
                         return zeile.NAME == hoveredArea.id && zeile.JAHR === "2012";
                     });
 
-                    // Deactivate Cursor, if Action isn't possible
-                    if(selectedArea && areaIsAussen(selectedArea) && areaIsAussen(hoveredArea)) {
-                        hoveredArea.style.cursor = "not-allowed";
-                        removeClass($(hoveredArea), "hovered");
-                    } else {
+
+                    if(     // block cursor and hovered-state if action is not possible
+                            (selectedArea && areaIsAussen(selectedArea) && areaIsAussen(hoveredArea))   //außen-außen
+                            || selectedArea == hoveredArea  // auf selbe area
+                    ) {
                         hoveredArea.style.cursor = "auto";
-                        addClass($(hoveredArea), "hovered");
+                        removeClass($(hoveredArea), "hovered");
+                    }
+
+                    else {       // action is possible
+
+                        hoveredArea.style.cursor = "pointer";
+
+                        if(areaIsInnen(selectedArea) && areaIsInnen(hoveredArea)) {     // hover ALL of Munich if we're inside
+                            addClass($(hoveredArea).parent().children(), "hovered");
+                        }
+
+                        else {      // hover only hovered Element if we're not entirely in Munich
+                            addClass($(hoveredArea), "hovered");
+                        }
                     }
 
                 }
 
-                function mouseOutHandler(event){
+                function mouseOutHandler(event) {
                     var unHoveredArea = event.target;
 
                     removeClass($(unHoveredArea), "hovered");
 
+                    // if all of Munich was hovered (area inside selected && area inside hovered
+                    if (areaIsInnen(unHoveredArea)) {
+                        removeClass($(unHoveredArea).parent().children(), "hovered");
+                    }
                 }
 
                 function mouseClickHandler(event) {
@@ -109,7 +126,7 @@
                     var actuallyDrawStuff = true;
 
                     // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
-                    if ($(selectedArea)[0] === $(clickedArea)[0]) {
+                    if (selectedArea == clickedArea) {
                         deletePath();
 
                     } else if (selectedArea && !endPoint) { //wenn bereits ein Element ausgewählt ist
