@@ -148,20 +148,23 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
         .attr("id", cLineID)
         .attr("pointer-events", "none")
         .attr("stroke-linecap", "round");
+
     if (!isFinal) {
         d3.select(svgDoc).select("#"+cLineID)
             .attr("class","currentLine temporal");
         d3.select(svgDoc).select("#"+cLineSID)
             .attr("class","currentLineShadow temporal");
     } else {
-        svgDoc.getElementById(cLineID).addEventListener("click", destroyMe);
+        svgDoc.getElementById(cLineID).addEventListener("contextmenu", destroyMe);
+        svgDoc.getElementById(cLineID).setAttribute("pointer-events","all");
     }
 
     return cLineID;
 }
 
 function destroyMe(e) {
-    console.log(e.target.id);
+    e.preventDefault();
+    e.target.parentNode.removeChild(e.target);
 }
 
 
