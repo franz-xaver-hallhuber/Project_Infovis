@@ -1,0 +1,28 @@
+body {
+    background: #333333;
+    color: lightgray;
+    font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif;
+    font-size: 9pt;
+
+}
+
+/*h1, h2, h3, h4 {*/
+    /*color: #ed5565; }*/
+
+h2 {
+    font-size: 2em; }
+
+h4 {
+    font-size: 10pt;
+}
+
+h3, h4 {
+    margin-bottom: 3px; }
+
+a {
+    color: #ed5565; }
+
+
+div {
+    /*border: 1px solid orange;*/
+}

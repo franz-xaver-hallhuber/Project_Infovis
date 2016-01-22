@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>The Munich Cosmopolit Index</title>
     <link rel="stylesheet" href="cosmoStyle.css">
+    <link rel="stylesheet" href="siteStyle.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -166,6 +167,8 @@
                             if(dataToShow != null){
 
                                 drawConnection(svgDoc, startPoint, endPoint, true, areaIsInnen(selectedArea), dataToShow[0]); //Zeichne Pfad UND starte Animation
+                                addInfo(dataToShow);
+
                                 removeClass($(selectedArea), "selected");
                                 selectedArea = null;
                                 startPoint = null;
@@ -256,6 +259,47 @@
                 }
 
 
+
+
+
+
+
+                function addInfo(dataToShow){
+
+                    var zeile = dataToShow[0];
+                    var stadtteil = zeile.NAME.substring(3);
+                    var ziel = zeile.INDIKATOR_AUSPRAEGUNG;
+
+                    var einwohner = parseInt(zeile.BASISWERT_3);
+
+
+//                            BASISWERT_1: "2825"
+//                    BASISWERT_2: "2931"
+//                    BASISWERT_3: "38089.3"
+//                    GLIEDERUNG: "Stadtbezirk"
+//                    INDIKATOR_AUSPRAEGUNG: "Innerhalb Münchens"
+//                    INDIKATOR_WERT: "-2.8"
+//                    JAHR: "2009"
+//                    NAME: "06 Sendling"
+//                    NUMMER: "6"
+
+
+
+                    var infoElement = $("<div></div>").attr("id", "0");
+
+                    var firstLine;
+
+                    var nameZeile = $("<h3></h3>").text(String.format("{0} ({1})", stadtteil, ziel));
+                    var einwohnerZeile = $("<p></p>").text(String.format("Einwohner: {0}", einwohner));
+
+//                    infoElement.append
+
+
+                    $("#connectionInfosContainer").append(nameZeile);
+                    $("#connectionInfosContainer").append(einwohnerZeile);
+                }
+
+
             }, false);
         })
     </script>
@@ -272,10 +316,31 @@
 </head>
 <body>
 
-<div style="float:left; display: block; border: 1px solid red;">
+<div style="float:left;">
     <object data="muenchen_exportiert.svg" type="image/svg+xml" id="containerSVG"></object>
 </div>
-<div style="border:1px solid green; display: block;">blasdklajlkjds</div>
+<div id="connectionInfosContainer" style="margin-left: 574px;">
+    <div>
+        <p>
+            <b><span style="color: white; font-size:10pt">Neuhausen - Nymphenburg <span style="font-weight:normal;font-size:9pt">(Übriges Deutschland)</span></span></b><br/>
+            <b>Einwohner: </b><span style="color: lightblue;">93601</span><br/>
+            <b>Zuzüge: </b><span style="color: lightblue;">1632 (3,8%)</span><br/>
+            <b>Wegzüge: </b><span style="color: lightblue;">1095 (1,7%)</span><br/>
+            <b>Veränderung: </b><span style="color: lightblue;">+537 (+0.6%)</span><br/>
+        </p>
+    </div>
+
+    <div>
+        <p>
+            <b><span style="color: white; font-size:10pt">Neuhausen - Nymphenburg <span style="font-weight:normal;font-size:9pt">(Übriges Deutschland)</span></span></b><br/>
+        <b>Einwohner: </b><span style="color: lightgreen;">93601</span><br/>
+        <b>Zuzüge: </b><span style="color: lightgreen;">1632 (3,8%)</span><br/>
+        <b>Wegzüge: </b><span style="color: lightgreen;">1095 (1,7%)</span><br/>
+        <b>Veränderung: </b><span style="color: lightgreen;">+537 (+0.6%)</span><br/>
+        </p>
+    </div>
+
+</div>
 <div id="info"></div>
 <div id="arrowContainer">
 

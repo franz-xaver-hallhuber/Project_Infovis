@@ -158,7 +158,7 @@
 
 .area {
     stroke:black;
-    stroke-width:1px;
+    stroke-width:0.7px;
 }
 
 .area.shine {
@@ -257,8 +257,4 @@
     opacity: 0.2;
     stroke-width: 10;
     fill: none;
-}
-
-div {
-    border: 1px solid orange;
 }
