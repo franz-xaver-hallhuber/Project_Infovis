@@ -240,3 +240,7 @@
     -webkit-animation-timing-function: linear;
     max-height: 14px;
 }
+
+div {
+    border: 1px solid orange;
+}
