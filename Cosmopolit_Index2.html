@@ -39,172 +39,179 @@
             //add arrow svg to each div element
             addSvgs();
 
-            var svgElementInHTMLSite = document.getElementById("alphasvg");
+            var svgElementInHTMLSite = document.getElementById("containerSVG");
 
             //it's important to add an load event listener to the object, as it will load the svg doc asynchronously
             svgElementInHTMLSite.addEventListener("load", function () {
                 var svgDoc = svgElementInHTMLSite.contentDocument; //get the inner DOM of alpha.svg
                 var svgRoot = svgDoc.documentElement;
+                var allAreas = svgRoot.getElementsByTagName("path");
 
                 var selectedArea;
                 var startPoint;
                 var endPoint;
 
 
-                svgRoot.addEventListener("mousemove", function (e) {
-                    if (startPoint && !endPoint)
-                        drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, e), false);
+                svgRoot.addEventListener("mousemove", mouseMoveHandler);
 
-                    // TODO checken, ob Verbindung möglich ist
-                    // z.B. soll Ausland -> Deutschland nicht die gehighlighted werden
-                    // Mauszeiger soll Kreuz werden, falls nicht möglich
-
-                });
-
-
-                var allAreas = svgRoot.getElementsByTagName("path");
                 for (var i = 0; i < allAreas.length; i++) {
 
-                    allAreas[i].addEventListener("mouseover", function (e) {
-                        svgRoot.getElementById("area-name").textContent = e.target.id;
+                    allAreas[i].addEventListener("mouseover", mouseOverHandler);
+                    allAreas[i].addEventListener("click", mouseClickHandler);
+                }
+
+
+                function mouseMoveHandler(event){
+                        if (startPoint && !endPoint){
+                            drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, event), false);
+                        }
+
+                        // TODO checken, ob Verbindung möglich ist
+                        // z.B. soll Ausland -> Deutschland nicht die gehighlighted werden
+                        // Mauszeiger soll Kreuz werden, falls nicht möglich
+                }
+
+                function mouseOverHandler(event){
+
+                        var hoveredArea = event.target;
+
+                        svgRoot.getElementById("area-name").textContent = hoveredArea.id;
 
                         var areaInfo = allDataCleaned.filter(function(zeile){
-                            return zeile.NAME == e.target.id && zeile.JAHR === "2012";
+                            return zeile.NAME == hoveredArea.id && zeile.JAHR === "2012";
                         });
 
 
                         if(selectedArea){
 
                             if(areaIsAussen(selectedArea)){
-                                if(areaIsAussen(e.target)){
-                                    e.target.style.cursor="not-allowed";
+                                if(areaIsAussen(hoveredArea)){
+                                    hoveredArea.style.cursor="not-allowed";
                                 }
                             }
 
                         }
 
+                }
+
+                function mouseClickHandler(event) {
+
+                    var allDataFromYear2012 = allDataCleaned.filter(function(zeile){
+                        return zeile.JAHR == "2012";
+                    })
 
 
-                    });
+                    var clickedArea = event.target;
+                    var actuallyDrawStuff = true;
 
-                    allAreas[i].addEventListener("click", function (e) {
+                    // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
+                    if ($(selectedArea)[0] === $(clickedArea)[0]) {
+                        deletePath();
 
-                        var allDataFromYear2012 = allDataCleaned.filter(function(zeile){
-                            return zeile.JAHR == "2012";
-                        })
+                    } else if (selectedArea && !endPoint) { //wenn bereits ein Element ausgewählt ist
 
+                        endPoint = getCursorPosition(svgRoot, event);
 
-                        var eventArea = e.target;
-                        var actuallyDrawStuff = true;
+                        if(areaIsAussen(selectedArea)){
 
-                        // Deaktiviere Visualisierung, wenn ich erneut auf das aktive Element klicke
-                        if ($(selectedArea)[0] === $(eventArea)[0]) {
-                            deletePath();
+                            console.log("Startpunkt: außen")
 
-                        } else if (selectedArea && !endPoint) { //wenn bereits ein Element ausgewählt ist
+                            if(areaIsInnen(clickedArea)){
+                                console.log("Endpunkt: innen");
 
-                            endPoint = getCursorPosition(svgRoot, e);
-
-                            if(areaIsAussen(selectedArea)){
-
-                                console.log("Startpunkt: außen")
-
-                                if(areaIsInnen(eventArea)){
-                                    console.log("Endpunkt: innen");
-
-                                    var shownData = allDataFromYear2012.filter(function(zeile){
-                                        return zeile.INDIKATOR_AUSPRAEGUNG == selectedArea.id
-                                                && zeile.NAME == eventArea.id;
-                                    });
-
-                                } else {
-                                    console.log("Endpunkt: außen");
-                                    actuallyDrawStuff = false;
-                                    deletePath();
-                                }
+                                var shownData = allDataFromYear2012.filter(function(zeile){
+                                    return zeile.INDIKATOR_AUSPRAEGUNG == selectedArea.id
+                                            && zeile.NAME == clickedArea.id;
+                                });
 
                             } else {
+                                console.log("Endpunkt: außen");
+                                actuallyDrawStuff = false;
+                                deletePath();
+                            }
 
-                                console.log("Startpunkt innen");
+                        } else {
+
+                            console.log("Startpunkt innen");
 
 
 
-                                if(areaIsInnen(eventArea)){
-                                    console.log("Endpunkt: innen");
+                            if(areaIsInnen(clickedArea)){
+                                console.log("Endpunkt: innen");
 
-                                    var shownData = allDataFromYear2012.filter(function(zeile){
-                                        return zeile.INDIKATOR_AUSPRAEGUNG == $(eventArea).parent().attr('id')
-                                                && zeile.NAME == selectedArea.id;
-                                    })
+                                var shownData = allDataFromYear2012.filter(function(zeile){
+                                    return zeile.INDIKATOR_AUSPRAEGUNG == $(clickedArea).parent().attr('id')
+                                            && zeile.NAME == selectedArea.id;
+                                })
 
-                                } else {
-                                    console.log("Endpunkt: außen");
+                            } else {
+                                console.log("Endpunkt: außen");
 
-                                    var shownData = allDataFromYear2012.filter(function(zeile){
-                                        return zeile.INDIKATOR_AUSPRAEGUNG == eventArea.id
-                                                && zeile.NAME == selectedArea.id;
-                                    })
-
-                                }
+                                var shownData = allDataFromYear2012.filter(function(zeile){
+                                    return zeile.INDIKATOR_AUSPRAEGUNG == clickedArea.id
+                                            && zeile.NAME == selectedArea.id;
+                                })
 
                             }
 
-                            if(actuallyDrawStuff){
+                        }
+
+                        if(actuallyDrawStuff){
 
 
-                                console.log(shownData);
+                            console.log(shownData);
 
-                                var value = shownData[0].INDIKATOR_WERT;
+                            var value = shownData[0].INDIKATOR_WERT;
 
-                                console.log(value);
+                            console.log(value);
 
-                                var sortedData = allDataFromYear2012.sort(function(a,b){
-                                    if (parseFloat(a.INDIKATOR_WERT) > parseFloat(b.INDIKATOR_WERT)) {
-                                        return 1;
-                                    }
-                                    if (parseFloat(a.INDIKATOR_WERT) < parseFloat(b.INDIKATOR_WERT)) {
-                                        return -1;
-                                    }
-                                    // a must be equal to b
-                                    return 0;
-                                });
-
-                                for(var i = 0; i < sortedData.length; i++){
-                                    console.log(sortedData[i].INDIKATOR_WERT);
+                            var sortedData = allDataFromYear2012.sort(function(a,b){
+                                if (parseFloat(a.INDIKATOR_WERT) > parseFloat(b.INDIKATOR_WERT)) {
+                                    return 1;
                                 }
-//                            console.log(sortedData);
-                                console.log(sortedData[0]);
-                                console.log(sortedData[sortedData.length-1]);
+                                if (parseFloat(a.INDIKATOR_WERT) < parseFloat(b.INDIKATOR_WERT)) {
+                                    return -1;
+                                }
+                                // a must be equal to b
+                                return 0;
+                            });
 
-                                console.log(actuallyDrawStuff);
+                            for(var i = 0; i < sortedData.length; i++){
+                                console.log(sortedData[i].INDIKATOR_WERT);
+                            }
+//                            console.log(sortedData);
+                            console.log(sortedData[0]);
+                            console.log(sortedData[sortedData.length-1]);
+
+                            console.log(actuallyDrawStuff);
 
                             drawConnection(svgDoc, startPoint, endPoint, true, areaIsInnen(selectedArea), shownData[0]); //Zeichne Pfad UND starte Animation
 
-                            }
-
-
-
-
-                        } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
-
-                            toggleClass($(selectedArea), "selected");
-                            toggleClass($(eventArea), "selected");
-
-                            endPoint = null;
-                            removeById(svgRoot, "currentLine");
-                            removeById(svgRoot, "currentLineShadow");
-                            removeById(svgRoot, "movingCircle");
-
-                            selectedArea = eventArea;
-                            startPoint = getCursorPosition(svgRoot, e);
-                            console.log("id=\"" + e.target.id + "\" x=\"" + startPoint.x + "\" y=\"" + startPoint.y + "\"");
-                            //toggleAnimation(false);
-                            removeDivs();
-
-
                         }
-                    });
+
+
+
+
+                    } else {    // Ansonsten ist das gerade geklickte Element das neue aktive Element
+
+                        toggleClass($(selectedArea), "selected");
+                        toggleClass($(clickedArea), "selected");
+
+                        endPoint = null;
+                        removeById(svgRoot, "currentLine");
+                        removeById(svgRoot, "currentLineShadow");
+                        removeById(svgRoot, "movingCircle");
+
+                        selectedArea = clickedArea;
+                        startPoint = getCursorPosition(svgRoot, event);
+                        console.log("id=\"" + event.target.id + "\" x=\"" + startPoint.x + "\" y=\"" + startPoint.y + "\"");
+                        //toggleAnimation(false);
+                        removeDivs();
+
+
+                    }
                 }
+
 
                 function deletePath(){
                     toggleClass($(selectedArea), "selected");
@@ -235,7 +242,7 @@
 </head>
 <body>
 
-<object data="muenchen_exportiert.svg" type="image/svg+xml" id="alphasvg" style="float:left;"></object>
+<object data="muenchen_exportiert.svg" type="image/svg+xml" id="containerSVG" style="float:left;"></object>
 <div id="info"></div>
 <div id="arrowContainer">
 
