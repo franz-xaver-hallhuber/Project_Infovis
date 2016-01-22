@@ -121,22 +121,57 @@
     fill:#D8D8D8;
 }
 
+.area.ausland.hovered {
+    fill: hsl(220, 52%, 40%);
+}
+
+.area.deutschland.hovered {
+    fill: hsl(220, 52%, 54%);
+
+}
+.area.bayern.hovered {
+    fill: hsl(220, 52%, 69%);
+}
+
+.area.inside-m.hovered {
+    fill: hsl(220, 52%, 84%);
+}
+
+
+
+.area.ausland.selected {
+    fill: hsl(112, 64%, 40%);
+}
+
+.area.deutschland.selected {
+    fill: hsl(112, 64%, 54%);
+
+}
+.area.bayern.selected {
+    fill: hsl(112, 64%, 69%);
+}
+
+.area.inside-m.selected {
+    fill: hsl(112, 64%, 84%);
+}
+
 
 .area {
     stroke:black;
     stroke-width:1px;
 }
 
+.area.shine {
+    stroke: yellow;
+}
+
 .area:hover {
     pointer-events:all;
 }
 
-.area.hovered {
-    fill: steelblue;
-}
 
 .area.selected {
-    /*fill: orange;*/
+    fill: green;
 }
 /*.area.outside-m:hover {*/
     /*fill: steelblue;*/
