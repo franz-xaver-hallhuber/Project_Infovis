@@ -13,6 +13,7 @@ function toggleClass(element, value) {
 
 function addClass(element, value) {
 
+
     element.attr("class", function(index, classNames){
         if(classNames.indexOf(value) == -1) {
             return classNames + " " +value;
@@ -122,31 +123,48 @@ function calculatePathPoints(startPoint, endPoint) {
 }
 
 
-function drawStaticConnection(svgDoc, shadepath, linepath) {
+function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
+
+    d3.select(svgDoc).selectAll(".temporal").remove();
+
+    var cLineID = "currentLine" + d3.select(svgDoc).selectAll(".currentLine").size();
+    var cLineSID = "currentShadowLine" + d3.select(svgDoc).selectAll(".currentLineShadow").size();
+
+    console.log(d3.select(svgDoc).selectAll(".currentLine"));
 
     //draw shadow line
     d3.select(svgDoc).select("svg")
         .append("path")
         .attr("d", shadepath)
-        .attr("id", "currentLineShadow")
-        .attr("pointer-events", "none")
-        .style("stroke", "black")
-        .style("opacity", "0.3")
-        .style("stroke-width", "10")
-        .style("fill", "none");
-
+        .attr("class", "currentLineShadow")
+        .attr("id", cLineSID)
+        .attr("pointer-events", "none");
 
     //draw main line
     d3.select(svgDoc).select("svg")
         .append("path")
         .attr("d", linepath)
-        .attr("id", "currentLine")
+        .attr("class", "currentLine")
+        .attr("id", cLineID)
         .attr("pointer-events", "none")
-        .attr("stroke-linecap", "round")
-        .style("stroke", "white")
-        .style("opacity", "0.5")
-        .style("stroke-width", "14")
-        .style("fill", "none");
+        .attr("stroke-linecap", "round");
+
+    if (!isFinal) {
+        d3.select(svgDoc).select("#"+cLineID)
+            .attr("class","currentLine temporal");
+        d3.select(svgDoc).select("#"+cLineSID)
+            .attr("class","currentLineShadow temporal");
+    } else {
+        svgDoc.getElementById(cLineID).addEventListener("contextmenu", destroyMe);
+        svgDoc.getElementById(cLineID).setAttribute("pointer-events","all");
+    }
+
+    return cLineID;
+}
+
+function destroyMe(e) {
+    e.preventDefault();
+    e.target.parentNode.removeChild(e.target);
 }
 
 
@@ -158,14 +176,14 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
     var shadepath = connection.shadepath;
     var linepath = connection.linepath;
 
-    removeById(svgRoot, "currentLine");
-    removeById(svgRoot, "currentLineShadow");
+    //removeById(svgRoot, "currentLine");
+    //removeById(svgRoot, "currentLineShadow");
 
-    drawStaticConnection(svgDoc, shadepath, linepath);
+
+    var currentID = drawStaticConnection(svgDoc, shadepath, linepath, addAnimation);
 
 
     if (addAnimation) {
-
 
         var zuzuege = zeile.BASISWERT_1;
         var wegzuege = zeile.BASISWERT_2;
@@ -173,8 +191,6 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         console.log("Rein: "+zuzuege);
         console.log("Raus: "+wegzuege);
         console.log("Ind: "+differenz);
-
-
 
         //add manually to document head
         $("head").append("<style type='text/css' id='dynCss'>" +
@@ -188,7 +204,7 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
 
 
         // length of the currentLine
-        var currentLineLength = svgDoc.getElementById("currentLine").getTotalLength();
+        var currentLineLength = svgDoc.getElementById(currentID).getTotalLength();
 
         //max possible length is
         var maxlen = Math.sqrt(Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("width")), 2) + Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("height")), 2));

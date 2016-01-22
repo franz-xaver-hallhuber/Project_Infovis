@@ -11,6 +11,12 @@
     <script type="text/javascript" src="cosmoScript.js"></script>
     <script type="text/javascript" src="processRawData.js"></script>
 
+    <todo>
+        <item id="todo1">Mehrere Pfeile gleichzeitig</item>
+        <item id="todo2">Ganze Stadt highlighten, wenn Startpunkt innerhalb</item>
+        <item id="todo3">Slider einbauen mit Jahreszahlen, min und max wert aus Datenbank auslesen</item>
+        <item id="todo4">Mit esc linie ziehen abbrechen</item>
+    </todo>
 
     <script>
 
@@ -71,7 +77,6 @@
 
                 // redraws non-animated connection while mouse is moving
                 function mouseMoveHandler(event){
-
                     if (startPoint && !endPoint){
                         drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, event), false);
                     }
