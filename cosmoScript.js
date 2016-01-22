@@ -11,6 +11,23 @@ function toggleClass(element, value) {
     });
 }
 
+function addClass(element, value) {
+
+    element.attr("class", function(index, classNames){
+        if(classNames.indexOf(value) == -1) {
+            return classNames + " " +value;
+        }
+    });
+}
+
+function removeClass(element, value){
+    element.attr("class", function(index, classNames){
+        if(classNames.indexOf(value) > -1){
+            return classNames.replace(value, '');
+        }
+    })
+}
+
 function getCursorPosition(svgRoot, e) {
     var pt = svgRoot.createSVGPoint();
     pt.x = e.clientX;
@@ -211,24 +228,24 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         var greyDir;
 
         if (startIsInnen) {
-           greenDir = "reversemotion";
-           redDir = "straightmotion";
-           greyDir = differenz > 0 ? "greyreversemotion" : "greystraightmotion";
-         } else {
-           greenDir = "straightmotion";
-           redDir = "reversemotion";
-           greyDir = differenz > 0 ? "greystraightmotion" : "greyreversemotion";
-        }
-
-       /* if ((differenz >= 0 && startIsInnen) || differenz < 0 && !startIsInnen) {
             greenDir = "reversemotion";
             redDir = "straightmotion";
-            greyDir = "greyreversemotion";
+            greyDir = differenz > 0 ? "greyreversemotion" : "greystraightmotion";
         } else {
             greenDir = "straightmotion";
             redDir = "reversemotion";
-            greyDir = "greystraightmotion";
-        }*/
+            greyDir = differenz > 0 ? "greystraightmotion" : "greyreversemotion";
+        }
+
+        /* if ((differenz >= 0 && startIsInnen) || differenz < 0 && !startIsInnen) {
+         greenDir = "reversemotion";
+         redDir = "straightmotion";
+         greyDir = "greyreversemotion";
+         } else {
+         greenDir = "straightmotion";
+         redDir = "reversemotion";
+         greyDir = "greystraightmotion";
+         }*/
 
         //add required number of divs
         addDivs(greenArrCount, redArrCount, greyArrCount, greenDir, redDir, greyDir);

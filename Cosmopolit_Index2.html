@@ -57,40 +57,44 @@
                 for (var i = 0; i < allAreas.length; i++) {
 
                     allAreas[i].addEventListener("mouseover", mouseOverHandler);
+                    allAreas[i].addEventListener("mouseout", mouseOutHandler);
                     allAreas[i].addEventListener("click", mouseClickHandler);
                 }
 
-
+                // redraws non-animated connection while mouse is moving
                 function mouseMoveHandler(event){
-                        if (startPoint && !endPoint){
-                            drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, event), false);
-                        }
 
-                        // TODO checken, ob Verbindung möglich ist
-                        // z.B. soll Ausland -> Deutschland nicht die gehighlighted werden
-                        // Mauszeiger soll Kreuz werden, falls nicht möglich
+                    if (startPoint && !endPoint){
+                        drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, event), false);
+                    }
                 }
+
 
                 function mouseOverHandler(event){
 
-                        var hoveredArea = event.target;
+                    var hoveredArea = event.target;
 
-                        svgRoot.getElementById("area-name").textContent = hoveredArea.id;
+                    // Show info of hovered Area
+                    svgRoot.getElementById("area-name").textContent = hoveredArea.id;
+                    var areaInfo = allDataCleaned.filter(function(zeile){
+                        return zeile.NAME == hoveredArea.id && zeile.JAHR === "2012";
+                    });
 
-                        var areaInfo = allDataCleaned.filter(function(zeile){
-                            return zeile.NAME == hoveredArea.id && zeile.JAHR === "2012";
-                        });
+                    // Deactivate Cursor, if Action isn't possible
+                    if(selectedArea && areaIsAussen(selectedArea) && areaIsAussen(hoveredArea)) {
+                        hoveredArea.style.cursor = "not-allowed";
+                        removeClass($(hoveredArea), "hovered");
+                    } else {
+                        hoveredArea.style.cursor = "auto";
+                        addClass($(hoveredArea), "hovered");
+                    }
 
+                }
 
-                        if(selectedArea){
+                function mouseOutHandler(event){
+                    var unHoveredArea = event.target;
 
-                            if(areaIsAussen(selectedArea)){
-                                if(areaIsAussen(hoveredArea)){
-                                    hoveredArea.style.cursor="not-allowed";
-                                }
-                            }
-
-                        }
+                    removeClass($(unHoveredArea), "hovered");
 
                 }
 
@@ -187,6 +191,7 @@
 
                             drawConnection(svgDoc, startPoint, endPoint, true, areaIsInnen(selectedArea), shownData[0]); //Zeichne Pfad UND starte Animation
 
+                            selectedArea = null;
                         }
 
 

@@ -131,17 +131,20 @@
     pointer-events:all;
 }
 
-.area.outside-m:hover {
-    fill: steelblue;
+.area.hovered {
+    fill: blue;
 }
+/*.area.outside-m:hover {*/
+    /*fill: steelblue;*/
+/*}*/
 
-.area.inside-m:hover {
-    fill: steelblue;
-}
+/*.area.inside-m:hover {*/
+    /*fill: steelblue;*/
+/*}*/
 
-.area.selected, .area.selected:hover {
-    fill: orange;
-}
+/*.area.selected, .area.selected:hover {*/
+    /*fill: orange;*/
+/*}*/
 
 .greenDiv {
     z-index: 10;
