@@ -147,6 +147,23 @@ function sortByINDIKATOR_WERT(){
     }
 }
 
+function sortByJahr(allDataCleaned){
+    allDataCleaned.sort(function (a, b) {
+        if (a.JAHR > b.JAHR) {
+            return 1;
+        }
+        if (a.JAHR < b.JAHR) {
+            return -1;
+        }
+        // a must be equal to b
+        return 0;
+    });
+
+    for(var i = 0; i < allDataCleaned.length; i++){
+        console.log(allDataCleaned[i].JAHR);
+    }
+}
+
 
 
 
@@ -167,6 +184,19 @@ String.format = function() {
     }
 
     return theString;
+}
+
+
+
+
+
+function getSignedNumber(theNumber)
+{
+    if(theNumber > 0){
+        return "+" + theNumber;
+    }else{
+        return theNumber.toString();
+    }
 }
 
 

@@ -25,6 +25,7 @@
         $(document).ready(function () {
 
             var allDataCleaned = [];
+            var selectedYear = 2012;
 
 
             // warten bis beide ajax-aufrufe die Daten vom Server haben
@@ -40,6 +41,8 @@
 
                 console.log("Et voilà: ");
                 console.log(allDataCleaned);
+
+//                sortByJahr(allDataCleaned);
 
 
             });
@@ -231,15 +234,15 @@
 //                        NUMMER: "6"
 //                    }];
 
-                    var allDataFromYear2012 = allDataCleaned.filter(function(zeile){
-                        return zeile.JAHR == "2012";
+                    var allDataFromSelectedYear = allDataCleaned.filter(function(zeile){
+                        return zeile.JAHR == selectedYear;
                     })
 
                     if (areaIsAussen(selectedArea)) {     // starts außen
 
                         if (areaIsInnen(clickedArea)) {       // ends innen
 
-                            return allDataFromYear2012.filter(function (zeile) {
+                            return allDataFromSelectedYear.filter(function (zeile) {
                                 return zeile.INDIKATOR_AUSPRAEGUNG == selectedArea.id
                                         && zeile.NAME == clickedArea.id;
                             });
@@ -253,14 +256,14 @@
 
                         if (areaIsInnen(clickedArea)) {       //ends innen
 
-                            return allDataFromYear2012.filter(function (zeile) {
+                            return allDataFromSelectedYear.filter(function (zeile) {
                                 return zeile.INDIKATOR_AUSPRAEGUNG == $(clickedArea).parent().attr('id')
                                         && zeile.NAME == selectedArea.id;
                             })
 
                         } else {        // ends außen
 
-                            return allDataFromYear2012.filter(function (zeile) {
+                            return allDataFromSelectedYear.filter(function (zeile) {
                                 return zeile.INDIKATOR_AUSPRAEGUNG == clickedArea.id
                                         && zeile.NAME == selectedArea.id;
                             })
@@ -282,7 +285,14 @@
                     var stadtteil = zeile.NAME.substring(3);
                     var ziel = zeile.INDIKATOR_AUSPRAEGUNG;
 
+                    var jahr = zeile.JAHR;
                     var einwohner = parseInt(zeile.BASISWERT_3);
+                    var zuzuege = parseInt(zeile.BASISWERT_1);
+                    var zuzuegeRate = getSignedNumber((zuzuege/einwohner * 100).toFixed(2));
+                    var wegzuege = parseInt(zeile.BASISWERT_2);
+                    var wegzuegeRate = getSignedNumber((wegzuege/einwohner * 100).toFixed(2));
+                    var veraenderung = zuzuege-wegzuege;
+                    var veraenderungRate = getSignedNumber((veraenderung/einwohner * 100).toFixed(2));
 
 
 //                    BASISWERT_1: "2825"
@@ -304,15 +314,31 @@
                     var closeButton = $("<div></div>")
                             .text(String.fromCharCode(10006));
                     var nameZeile = $("<h3></h3>").text(String.format("{0} ({1})", stadtteil, ziel));
+                    var valuesBox = $("<p></p>");
+
+
+
+                    valuesBox.html(String.format("" +
+                            "Jahr: <val>{0}</val><br/>" +
+                            "Einwohner: <val>{1}</val><br/>" +
+                            "Zuzüge: <val>{2} ({3}%)</val></br>" +
+                            "Wegzüge: <val>{4} ({5}%)</val></br>" +
+                            "Veränderung: <val>{6} ({7}%)</val></br>",
+                            jahr,
+                            einwohner,
+                            zuzuege, zuzuegeRate,
+                            wegzuege, wegzuegeRate,
+                            veraenderung, veraenderungRate))
+
                     var einwohnerZeile = $("<p></p>").text(String.format("Einwohner: {0}", einwohner));
 
-//                    infoElement.append
 
+                    $(valuesBox).find("val").css("color", "green");
 
                     $("#connectionInfosContainer").append(infoElement);
                     $(infoElement).append(closeButton);
                     $(infoElement).append(nameZeile);
-                    $(infoElement).append(einwohnerZeile);
+                    $(infoElement).append(valuesBox);
 
                     $(closeButton)
                             .attr("class", "closeButton")
