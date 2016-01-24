@@ -210,7 +210,7 @@
 }
 
 .greySvg {
-    fill: white;
+    fill: darkgrey;
     stroke-width: 0;
     box-shadow: darkgrey;
 }
@@ -257,4 +257,8 @@
     opacity: 0.2;
     stroke-width: 10;
     fill: none;
+}
+
+#yearslider {
+    min-width: 100%;
 }

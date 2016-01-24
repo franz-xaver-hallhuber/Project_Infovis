@@ -343,3 +343,18 @@ function map_range(value, low1, high1, low2, high2) {
 }
 
 
+function setRangeValues(min,max) {
+    var slider = document.getElementById("yearslider");
+    $(slider)
+        .attr("step",1)
+        .attr("min",min)
+        .attr("max",max);
+
+    slider.addEventListener("input",function(e) {
+        $("#currentyearspan").text(e.target.value);
+        return;
+    });
+
+    slider.value = max;
+    $("#currentyearspan").text(max);
+}

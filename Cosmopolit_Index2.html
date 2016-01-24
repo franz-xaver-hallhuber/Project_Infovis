@@ -12,12 +12,12 @@
     <script type="text/javascript" src="cosmoScript.js"></script>
     <script type="text/javascript" src="processRawData.js"></script>
 
-    <todo>
-        <item id="todo1">Mehrere Pfeile gleichzeitig</item>
+    <!--<todo>
+        <item id="todo1">Mehrere Pfeile gleichzeitig DONE</item>
         <item id="todo2">Ganze Stadt highlighten, wenn Startpunkt innerhalb</item>
-        <item id="todo3">Slider einbauen mit Jahreszahlen, min und max wert aus Datenbank auslesen</item>
+        <item id="todo3">Slider einbauen mit Jahreszahlen, min und max wert aus Datenbank auslesen DONE</item>
         <item id="todo4">Mit esc linie ziehen abbrechen</item>
-    </todo>
+    </todo>-->
 
     <script>
 
@@ -25,7 +25,6 @@
         $(document).ready(function () {
 
             var allDataCleaned = [];
-            var selectedYear = 2012;
 
 
             // warten bis beide ajax-aufrufe die Daten vom Server haben
@@ -44,11 +43,15 @@
 
 //                sortByJahr(allDataCleaned);
 
+                var years = [];
+                $.each(allDataCleaned, function(i,v) {
+                    years.push(v.JAHR);
+                });
+
+                setRangeValues(Math.min.apply(null,years),Math.max.apply(null,years));
 
             });
 
-            //add arrow svg to each div element
-            addSvgs();
 
             var svgElementInHTMLSite = document.getElementById("containerSVG");
 
@@ -235,8 +238,8 @@
 //                    }];
 
                     var allDataFromSelectedYear = allDataCleaned.filter(function(zeile){
-                        return zeile.JAHR == selectedYear;
-                    })
+                        return zeile.JAHR == $("#currentyearspan").text();
+                    });
 
                     if (areaIsAussen(selectedArea)) {     // starts außen
 
@@ -382,6 +385,13 @@
 
 <div style="float:left;">
     <object data="muenchen_exportiert.svg" type="image/svg+xml" id="containerSVG"></object>
+
+    <p>
+        <span style="font-size: 15pt">Current Year:</span>
+        <span style="font-weight: bold; font-size: 15pt" id="currentyearspan"></span>
+    </p>
+
+    <input type="range" id="yearslider" />
 </div>
 <div id="connectionInfosContainer" style="margin-left: 574px;">
     <div>
