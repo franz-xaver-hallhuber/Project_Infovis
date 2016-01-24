@@ -293,6 +293,7 @@
                     var wegzuegeRate = getSignedNumber((wegzuege/einwohner * 100).toFixed(2));
                     var veraenderung = zuzuege-wegzuege;
                     var veraenderungRate = getSignedNumber((veraenderung/einwohner * 100).toFixed(2));
+                    var veraenderungArrow = (veraenderung > 0) ? "&uarr;" : "&darr;";
 
 
 //                    BASISWERT_1: "2825"
@@ -323,12 +324,12 @@
                             "Einwohner: <val>{1}</val><br/>" +
                             "Zuzüge: <val>{2} ({3}%)</val></br>" +
                             "Wegzüge: <val>{4} ({5}%)</val></br>" +
-                            "Veränderung: <val>{6} ({7}%)</val></br>",
+                            "Veränderung: <val>{6} ({7}%) {8}</val></br>",
                             jahr,
                             einwohner,
                             zuzuege, zuzuegeRate,
                             wegzuege, wegzuegeRate,
-                            veraenderung, veraenderungRate))
+                            veraenderung, veraenderungRate, veraenderungArrow))
 
                     var einwohnerZeile = $("<p></p>").text(String.format("Einwohner: {0}", einwohner));
 
