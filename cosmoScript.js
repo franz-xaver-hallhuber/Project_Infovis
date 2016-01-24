@@ -167,6 +167,23 @@ function destroyMe(e) {
     e.target.parentNode.removeChild(e.target);
 }
 
+function destroyById(svgDoc, id){
+
+    var connectionId = id.replace("info", "");
+    console.log(connectionId);
+
+    removeDivs(connectionId);
+
+    var connection = svgDoc.getElementById(connectionId);
+    console.log("connection: ");
+    console.log(connection);
+
+    connection.parentNode.removeChild(connection.previousSibling);
+    connection.parentNode.removeChild(connection);
+
+
+}
+
 
 function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen, zeile) {
 

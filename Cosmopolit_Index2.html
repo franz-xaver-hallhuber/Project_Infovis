@@ -166,10 +166,9 @@
 
                             if(dataToShow != null){
 
-                                drawConnection(svgDoc, startPoint, endPoint, true, areaIsInnen(selectedArea), dataToShow[0]); //Zeichne Pfad UND starte Animation
-                                addInfo(dataToShow);
-                                addInfo(dataToShow);
-                                addInfo(dataToShow);
+                                var id = drawConnection(svgDoc, startPoint, endPoint, true, areaIsInnen(selectedArea), dataToShow[0]); //Zeichne Pfad UND starte Animation
+                                addInfo(dataToShow, id);
+
 
                                 removeClass($(selectedArea), "selected");
                                 selectedArea = null;
@@ -277,7 +276,7 @@
 
 
 
-                function addInfo(dataToShow){
+                function addInfo(dataToShow, id){
 
                     var zeile = dataToShow[0];
                     var stadtteil = zeile.NAME.substring(3);
@@ -298,7 +297,7 @@
 
 
 
-                    var infoElement = $("<div></div>").attr("id", "0").attr("class", "connectionInfoDiv");
+                    var infoElement = $("<div></div>").attr("id", id+"info").attr("class", "connectionInfoDiv");
 
                     var firstLine;
 
@@ -325,6 +324,7 @@
                             })
                             .click(function(){
                                 infoElement.remove();
+                                destroyById(svgDoc, id);
                             })
                             .hide();
 
