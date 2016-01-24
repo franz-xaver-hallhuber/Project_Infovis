@@ -7,7 +7,7 @@ body {
 }
 
 /*h1, h2, h3, h4 {*/
-    /*color: #ed5565; }*/
+/*color: #ed5565; }*/
 
 h2 {
     font-size: 2em; }
@@ -17,7 +17,9 @@ h4 {
 }
 
 h3, h4 {
-    margin-bottom: 3px; }
+    margin-bottom: 3px;
+    margin-top:0px;
+}
 
 a {
     color: #ed5565; }
@@ -25,4 +27,23 @@ a {
 
 div {
     /*border: 1px solid orange;*/
+}
+
+.connectionInfoDiv {
+    border: 1px solid transparent;
+    padding: 6px;
+    width: 574px;
+    border-radius:10px;
+}
+
+.connectionInfoDiv:hover {
+    border: 1px solid grey;
+}
+
+.closeButton {
+    position: relative;
+    font-size:12pt;
+    float: right;
+    right: 0px;
+    top: 0px;
 }

@@ -168,6 +168,8 @@
 
                                 drawConnection(svgDoc, startPoint, endPoint, true, areaIsInnen(selectedArea), dataToShow[0]); //Zeichne Pfad UND starte Animation
                                 addInfo(dataToShow);
+                                addInfo(dataToShow);
+                                addInfo(dataToShow);
 
                                 removeClass($(selectedArea), "selected");
                                 selectedArea = null;
@@ -217,6 +219,18 @@
 
 
                 function getDataToShow(selectedArea, clickedArea) {
+
+                    return [{
+                        BASISWERT_1: "2825",
+                        BASISWERT_2: "2931",
+                        BASISWERT_3: "38089.3",
+                        GLIEDERUNG: "Stadtbezirk",
+                        INDIKATOR_AUSPRAEGUNG: "Innerhalb Münchens",
+                        INDIKATOR_WERT: "-2.8",
+                        JAHR: "2009",
+                        NAME: "06 Neuhausen - Nymphenburg - Haidhausen",
+                        NUMMER: "6"
+                    }];
 
                     var allDataFromYear2012 = allDataCleaned.filter(function(zeile){
                         return zeile.JAHR == "2012";
@@ -272,7 +286,7 @@
                     var einwohner = parseInt(zeile.BASISWERT_3);
 
 
-//                            BASISWERT_1: "2825"
+//                    BASISWERT_1: "2825"
 //                    BASISWERT_2: "2931"
 //                    BASISWERT_3: "38089.3"
 //                    GLIEDERUNG: "Stadtbezirk"
@@ -284,18 +298,42 @@
 
 
 
-                    var infoElement = $("<div></div>").attr("id", "0");
+                    var infoElement = $("<div></div>").attr("id", "0").attr("class", "connectionInfoDiv");
 
                     var firstLine;
 
+                    var closeButton = $("<div></div>")
+                            .text(String.fromCharCode(10006));
                     var nameZeile = $("<h3></h3>").text(String.format("{0} ({1})", stadtteil, ziel));
                     var einwohnerZeile = $("<p></p>").text(String.format("Einwohner: {0}", einwohner));
 
 //                    infoElement.append
 
 
-                    $("#connectionInfosContainer").append(nameZeile);
-                    $("#connectionInfosContainer").append(einwohnerZeile);
+                    $("#connectionInfosContainer").append(infoElement);
+                    $(infoElement).append(closeButton);
+                    $(infoElement).append(nameZeile);
+                    $(infoElement).append(einwohnerZeile);
+
+                    $(closeButton)
+                            .attr("class", "closeButton")
+                            .css("cursor", "pointer")
+                            .hover(function(){
+                                $(this).css("color", "red");
+                            }, function(){
+                                $(this).css("color", "white");
+                            })
+                            .click(function(){
+                                infoElement.remove();
+                            })
+                            .hide();
+
+                    $(infoElement).hover(function(){
+                        $(closeButton).show();
+                    }, function(){
+                        $(closeButton).hide();
+                    });
+
                 }
 
 
@@ -325,17 +363,36 @@
             <b>Einwohner: </b><span style="color: lightblue;">93601</span><br/>
             <b>Zuzüge: </b><span style="color: lightblue;">1632 (3,8%)</span><br/>
             <b>Wegzüge: </b><span style="color: lightblue;">1095 (1,7%)</span><br/>
-            <b>Veränderung: </b><span style="color: lightblue;">+537 (+0.6%)</span><br/>
+            <b>Veränderung: </b><span style="color: lightblue;">-537 (-0.6%) &darr;</span><br/>
         </p>
     </div>
 
     <div>
         <p>
             <b><span style="color: white; font-size:10pt">Neuhausen - Nymphenburg <span style="font-weight:normal;font-size:9pt">(Übriges Deutschland)</span></span></b><br/>
-        <b>Einwohner: </b><span style="color: lightgreen;">93601</span><br/>
-        <b>Zuzüge: </b><span style="color: lightgreen;">1632 (3,8%)</span><br/>
-        <b>Wegzüge: </b><span style="color: lightgreen;">1095 (1,7%)</span><br/>
-        <b>Veränderung: </b><span style="color: lightgreen;">+537 (+0.6%)</span><br/>
+            <b>Einwohner: </b><span style="color: lightgreen;">93601</span><br/>
+            <b>Zuzüge: </b><span style="color: lightgreen;">1632 (3,8%)</span><br/>
+            <b>Wegzüge: </b><span style="color: lightgreen;">1095 (1,7%)</span><br/>
+            <b>Veränderung: </b><span style="color: lightgreen;">+537 (+0.6%) &uarr;</span><br/>
+        </p>
+    </div>
+    <div>
+        <p>
+            <b><span style="color: white; font-size:10pt">Neuhausen - Nymphenburg <span style="font-weight:normal;font-size:9pt">(Übriges Deutschland)</span></span></b><br/>
+            <b>Einwohner: </b><span style="color: lightcoral;">93601</span><br/>
+            <b>Zuzüge: </b><span style="color: lightcoral;">1632 (3,8%)</span><br/>
+            <b>Wegzüge: </b><span style="color: lightcoral;">1095 (1,7%)</span><br/>
+            <b>Veränderung: </b><span style="color: lightcoral;">-537 (-0.6%) &darr;</span><br/>
+        </p>
+    </div>
+
+    <div>
+        <p>
+            <b><span style="color: white; font-size:10pt">Neuhausen - Nymphenburg <span style="font-weight:normal;font-size:9pt">(Übriges Deutschland)</span></span></b><br/>
+            <b>Einwohner: </b><span style="color: lightgoldenrodyellow;">93601</span><br/>
+            <b>Zuzüge: </b><span style="color: lightgoldenrodyellow;">1632 (3,8%)</span><br/>
+            <b>Wegzüge: </b><span style="color: lightgoldenrodyellow;">1095 (1,7%)</span><br/>
+            <b>Veränderung: </b><span style="color: lightgoldenrodyellow;">+537 (+0.6%) &uarr;</span><br/>
         </p>
     </div>
 

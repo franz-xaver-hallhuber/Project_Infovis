@@ -153,7 +153,7 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
             .attr("class","currentLineShadow temporal");
     } else {
         svgDoc.getElementById(cLineID).addEventListener("contextmenu", destroyMe);
-        svgDoc.getElementById(cLineID).setAttribute("pointer-events","all");
+        svgDoc.getElementById(cLineID).setAttribute("pointer-events","stroke");
     }
 
     return cLineID;
