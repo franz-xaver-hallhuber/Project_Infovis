@@ -165,6 +165,8 @@ function destroyMe(e) {
     //var svgDoc = document.getElementById("containerSVG").contentDocument;
     var shadow = e.target.parentNode.removeChild(e.target.previousSibling);
     e.target.parentNode.removeChild(e.target);
+
+    document.getElementById(e.target.id+"info").remove();
 }
 
 function destroyById(svgDoc, id){
