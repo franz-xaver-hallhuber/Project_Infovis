@@ -71,23 +71,17 @@ function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir, refId, doc) 
     for (var i = 0; i < nrgreen; i++) {
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "greenDiv " + refId);
-        //container.appendChild(newDiv);
-        d3.select(doc).select("svg")
-            .append(newDiv);
+        container.append(newDiv);
     }
     for (var i = 0; i < nrred; i++) {
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "redDiv " + refId);
-        //container.append(newDiv);
-        d3.select(doc).select("svg")
-            .append(newDiv);
+        container.append(newDiv);
     }
     for (var i = 0; i < nrgrey; i++) {
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "greyDiv " + refId);
-        //container.append(newDiv);
-        d3.select(doc).select("svg")
-            .append(newDiv);
+        container.append(newDiv);
     }
     addSvgs(greendir == "reversemotion", reddir == "reversemotion", greydir == "greyreversemotion", refId);
 }
