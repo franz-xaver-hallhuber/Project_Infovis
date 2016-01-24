@@ -66,22 +66,28 @@ function addSvgs(greenreverse, redreverse, greyreverse, forId) {
     $(".greyDiv." + forId).append(greystring);
 }
 
-function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir, refId) {
+function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir, refId, doc) {
     var container = $("#arrowContainer");
     for (var i = 0; i < nrgreen; i++) {
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "greenDiv " + refId);
-        document.getElementById("arrowContainer").appendChild(newDiv);
+        //container.appendChild(newDiv);
+        d3.select(doc).select("svg")
+            .append(newDiv);
     }
     for (var i = 0; i < nrred; i++) {
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "redDiv " + refId);
-        container.append(newDiv);
+        //container.append(newDiv);
+        d3.select(doc).select("svg")
+            .append(newDiv);
     }
     for (var i = 0; i < nrgrey; i++) {
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "greyDiv " + refId);
-        container.append(newDiv);
+        //container.append(newDiv);
+        d3.select(doc).select("svg")
+            .append(newDiv);
     }
     addSvgs(greendir == "reversemotion", reddir == "reversemotion", greydir == "greyreversemotion", refId);
 }
@@ -283,7 +289,7 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
          }*/
 
         //add required number of divs
-        addDivs(greenArrCount, redArrCount, greyArrCount, greenDir, redDir, greyDir, currentID);
+        addDivs(greenArrCount, redArrCount, greyArrCount, greenDir, redDir, greyDir, currentID, svgDoc);
 
         //select divs
         var greenArrs = $(".greenDiv." + currentID);
