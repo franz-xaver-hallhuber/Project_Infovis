@@ -16,7 +16,7 @@
         <item id="todo1">Mehrere Pfeile gleichzeitig DONE</item>
         <item id="todo2">Ganze Stadt highlighten, wenn Startpunkt innerhalb</item>
         <item id="todo3">Slider einbauen mit Jahreszahlen, min und max wert aus Datenbank auslesen DONE</item>
-        <item id="todo4">Mit esc linie ziehen abbrechen</item>
+        <item id="todo4">Mit esc linie ziehen abbrechen DONE</item>
     </todo>-->
 
     <script>
@@ -25,6 +25,7 @@
         $(document).ready(function () {
 
             var allDataCleaned = [];
+
 
 
             // warten bis beide ajax-aufrufe die Daten vom Server haben
@@ -163,9 +164,9 @@
                     if (selectedArea) { //wenn bereits ein Element ausgewählt ist
 
                         if (selectedArea == clickedArea) {
-                            deletePath();
+                            deletePath(null);
                         } else {
-
+                            window.removeEventListener("keydown", deletePath);
                             endPoint = getCursorPosition(svgRoot, event);
                             var dataToShow = getDataToShow(selectedArea, clickedArea);
                             console.log(dataToShow);
@@ -174,7 +175,6 @@
 
                                 var id = drawConnection(svgDoc, startPoint, endPoint, true, areaIsInnen(selectedArea), dataToShow[0]); //Zeichne Pfad UND starte Animation
                                 addInfo(dataToShow, id);
-
 
                                 removeClass($(selectedArea), "selected");
                                 selectedArea = null;
@@ -189,11 +189,12 @@
                         selectedArea = clickedArea;
                         addClass($(selectedArea), "selected");
 
-                        removeById(svgRoot, "currentLine");
-                        removeById(svgRoot, "currentLineShadow");
-                        removeById(svgRoot, "movingCircle");
+//                        removeById(svgRoot, "currentLine");
+//                        removeById(svgRoot, "currentLineShadow");
+//                        removeById(svgRoot, "movingCircle");
 
                         startPoint = getCursorPosition(svgRoot, event);
+                        svgDoc.addEventListener("keydown", deletePath);
                     }
                 }
 
@@ -203,16 +204,30 @@
 
 
 
-                function deletePath(){
-                    toggleClass($(selectedArea), "selected");
-                    selectedArea = null;
-                    startPoint = null;
-                    endPoint = null;
-                    removeById(svgRoot, "currentLine");
-                    removeById(svgRoot, "currentLineShadow");
-                    removeById(svgRoot, "movingCircle");
+                function deletePath(e){
+
+                    var proceed = false;
+
+                    if (e) {
+                        if (e.which == 27) proceed = true;
+                    } else {
+                        proceed = true;
+                    }
+
+                    if (proceed) {
+                        toggleClass($(selectedArea), "selected");
+                        selectedArea = null;
+                        startPoint = null;
+                        endPoint = null;
+//                        removeById(svgRoot, "currentLine");
+//                        removeById(svgRoot, "currentLineShadow");
+//                        remodveById(svgRoot, "currentLineShadow");
+//                        remodveById(svgRoot, "currentLineShadow");
+//                        remodveById(svgRoot, "currentLineShadow");
+//                        removeById(svgRoot, "movingCircle");
 //                    toggleAnimation(false);
-                    removeDivs();
+                        d3.select(svgDoc).selectAll(".temporal").remove();
+                    }
 
                 }
 
@@ -251,7 +266,7 @@
                             });
 
                         } else {        // ends außen
-                            deletePath();
+                            deletePath(null);
                             return null;
                         }
 

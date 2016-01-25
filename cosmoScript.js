@@ -87,6 +87,7 @@ function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir, refId, doc) 
 }
 
 function removeDivs(ofId) {
+    console.log("removing connection " + ofId);
     $("."+ofId).remove();
     $("#"+ofId).remove();
     //$("style[id='dynCss']").remove();
@@ -133,7 +134,7 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
     d3.select(svgDoc).select("svg")
         .append("path")
         .attr("d", shadepath)
-        .attr("class", "currentLineShadow")
+        .attr("class", "currentLineShadow " + cLineID)
         .attr("id", cLineSID)
         .attr("pointer-events", "none");
 
