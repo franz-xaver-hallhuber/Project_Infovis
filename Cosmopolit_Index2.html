@@ -426,14 +426,17 @@
 <div style="float:left;">
     <object data="muenchen_exportiert.svg" type="image/svg+xml" id="containerSVG"></object>
 
-    <p>
-        <span style="font-size: 15pt">Current Year:</span>
-        <span style="font-weight: bold; font-size: 15pt" id="currentyearspan"></span>
-    </p>
-
-    <input type="range" id="yearslider" />
 </div>
-<div id="connectionInfosContainer" style="margin-left: 574px;"></div>
+
+<div id="connectionInfosContainer" style="margin-left: 574px;">
+
+    <div style=" text-align:center;">
+        <div id="loading-indicator"><img src="img_load-indicator.gif"/></div>
+        <div id="currentyearspan"></div>
+        <div><input type="range" id="yearslider" value="2012"/>
+        </div>
+    </div>
+</div>
 <div id="info"></div>
 <div id="arrowContainer"></div>
 <div id="areaName"></div>

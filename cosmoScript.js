@@ -370,6 +370,10 @@ function setRangeValues(min,max) {
 
     slider.value = max;
     $("#currentyearspan").text(max);
+    $("#currentyearspan").css("display", "inline");
+    $("#yearslider").show();
+    $("#loading-indicator").hide();
+
 }
 
 

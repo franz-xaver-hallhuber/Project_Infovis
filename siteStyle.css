@@ -36,6 +36,12 @@ div {
     border-radius:5px;
 }
 
+#connectionInfosContainer {
+    padding-top: 50px;
+    /*border:1px solid orange;*/
+
+}
+
 .connectionInfoDiv:hover {
     /*border: 1px solid grey;*/
 }
@@ -46,4 +52,19 @@ div {
     float: right;
     right: 0px;
     top: 10px;
+}
+
+
+#yearslider {
+    width: 250px;
+    display: none;
+}
+
+#currentyearspan {
+
+    padding:3px 6px 3px 6px;
+    border-radius:10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+
 }
