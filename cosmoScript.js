@@ -1,3 +1,9 @@
+
+
+var lineColors = ["LightBlue", "LightGreen", "LightCoral", "LightGoldenRodYellow", "LightSalmon", "LightPink", "LightCyan"];
+var currentColorIndex = 0;
+var currentId = 0;
+
 function toggleClass(element, value) {
 
     element.attr("class", function (index, classNames) {
@@ -127,8 +133,10 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
 
     d3.select(svgDoc).selectAll(".temporal").remove();
 
-    var cLineID = "currentLine" + d3.select(svgDoc).selectAll(".currentLine").size();
-    var cLineSID = "currentShadowLine" + d3.select(svgDoc).selectAll(".currentLineShadow").size();
+    var cLineID = "currentLine" + currentId;
+    var cLineSID = "currentShadowLine" + currentId;
+    //var cLineID = "currentLine" + d3.select(svgDoc).selectAll(".currentLine").size();
+    //var cLineSID = "currentShadowLine" + d3.select(svgDoc).selectAll(".currentLineShadow").size();
 
     //draw shadow line
     d3.select(svgDoc).select("svg")
@@ -145,7 +153,8 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
         .attr("class", "currentLine")
         .attr("id", cLineID)
         .attr("pointer-events", "none")
-        .attr("stroke-linecap", "round");
+        .attr("stroke-linecap", "round")
+        .style("stroke", lineColors[currentColorIndex]);
 
     if (!isFinal) {
         d3.select(svgDoc).select("#"+cLineID)
@@ -154,7 +163,10 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
             .attr("class","currentLineShadow temporal");
     } else {
         svgDoc.getElementById(cLineID).addEventListener("contextmenu", destroyMe);
+        svgDoc.getElementById(cLineID).addEventListener("mouseover", connectionMouseoverHandler);
+        svgDoc.getElementById(cLineID).addEventListener("mouseout", connectionMouseoutHandler);
         svgDoc.getElementById(cLineID).setAttribute("pointer-events","stroke");
+        currentId++;
     }
 
     return cLineID;
@@ -358,4 +370,28 @@ function setRangeValues(min,max) {
 
     slider.value = max;
     $("#currentyearspan").text(max);
+}
+
+
+
+
+function connectionMouseoverHandler(event) {
+
+    var connectionId = event.target.id;
+    var svgDoc = document.getElementById("containerSVG").contentDocument;
+    $("#"+connectionId+"info .closeButton").show();
+    $("#"+connectionId+"info").css("border", "1px solid grey");
+    d3.select(svgDoc).select("#"+connectionId).style("stroke-width", "28");
+}
+
+
+
+
+function connectionMouseoutHandler(event){
+
+    var connectionId = event.target.id;
+    var svgDoc = document.getElementById("containerSVG").contentDocument;
+    $("#"+connectionId+"info .closeButton").hide();
+    $("#"+connectionId+"info").css("border", "1px solid transparent");
+    d3.select(svgDoc).select("#"+connectionId).style("stroke-width", "14");
 }

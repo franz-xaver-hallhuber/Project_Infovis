@@ -196,17 +196,21 @@
     animation-iteration-count: infinite;
     -webkit-animation-timing-function: linear;
     max-height: 14px;
+    pointer-events:none;
 }
 
 .greenSvg {
-    fill: darkgreen;
+    /*fill: darkgreen;*/
+    fill: white;
     stroke-width: 0;
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
 .redSvg {
-    fill: crimson;
+    /*fill: crimson;*/
+    fill: black;
     stroke-width: 0;
+    opacity: 0.6;
 }
 
 .greySvg {
@@ -226,6 +230,8 @@
     animation-iteration-count: infinite;
     -webkit-animation-timing-function: linear;
     max-height: 14px;
+    pointer-events:none;
+
 }
 
 .greyDiv {
@@ -239,6 +245,8 @@
     animation-iteration-count: infinite;
     -webkit-animation-timing-function: linear;
     max-height: 14px;
+    pointer-events:none;
+
 }
 
 .currentLine {
@@ -254,11 +262,19 @@
 
 .currentLineShadow {
     stroke: black;
-    opacity: 0.2;
+    opacity: 0.1;
     stroke-width: 10;
     fill: none;
 }
 
 #yearslider {
     min-width: 100%;
+}
+
+#areaName {
+    position:absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding:3px 6px 3px 6px;
+    border-radius:10px;
+    z-index:1000;
 }

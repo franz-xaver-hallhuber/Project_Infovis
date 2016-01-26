@@ -31,13 +31,13 @@ div {
 
 .connectionInfoDiv {
     border: 1px solid transparent;
-    padding: 6px;
+    padding: 0px 5px 0px 5px;
     width: 574px;
-    border-radius:10px;
+    border-radius:5px;
 }
 
 .connectionInfoDiv:hover {
-    border: 1px solid grey;
+    /*border: 1px solid grey;*/
 }
 
 .closeButton {
@@ -45,5 +45,5 @@ div {
     font-size:12pt;
     float: right;
     right: 0px;
-    top: 0px;
+    top: 10px;
 }

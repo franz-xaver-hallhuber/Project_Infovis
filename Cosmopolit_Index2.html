@@ -27,6 +27,7 @@
             var allDataCleaned = [];
 
 
+            $.ajaxSetup({ cache: true });       // https://github.com/ckan/ckan/issues/2011#issuecomment-160475999
 
             // warten bis beide ajax-aufrufe die Daten vom Server haben
             $.when(fetchAussen(), fetchBinnen()).done(function (aussenPackage, binnenPackage) {
@@ -88,6 +89,10 @@
                     if (startPoint && !endPoint){
                         drawConnection(svgDoc, startPoint, getCursorPosition(svgRoot, event), false);
                     }
+
+                    $("#areaName").css("left", event.pageX*1 + 20 + "px");
+                    $("#areaName").css("top", event.pageY*1 + 20 + "px");
+
                 }
 
 
@@ -100,12 +105,7 @@
                 function mouseOverHandler(event){
 
                     var hoveredArea = event.target;
-
-                    // Show info of hovered Area
-                    svgRoot.getElementById("area-name").textContent = hoveredArea.id;
-                    var areaInfo = allDataCleaned.filter(function(zeile){
-                        return zeile.NAME == hoveredArea.id && zeile.JAHR === "2012";
-                    });
+                    $("#areaName").show();
 
 
                     if(     // block cursor and hovered-state if action is not possible
@@ -114,6 +114,7 @@
                     ) {
                         hoveredArea.style.cursor = "auto";
                         removeClass($(hoveredArea), "hovered");
+                        $("#areaName").text(hoveredArea.id);
                     }
 
                     else {       // action is possible
@@ -122,10 +123,18 @@
 
                         if(areaIsInnen(selectedArea) && areaIsInnen(hoveredArea)) {     // hover ALL of Munich if we're inside
                             addClass($(hoveredArea).parent().children(), "hovered");
+                            $("#areaName").text("Innerhalb Münchens");
+
                         }
 
                         else {      // hover only hovered Element if we're not entirely in Munich
                             addClass($(hoveredArea), "hovered");
+                            if(areaIsInnen(hoveredArea)){
+                                $("#areaName").text(hoveredArea.id.substring(3));
+                            } else {
+                                $("#areaName").text(hoveredArea.id);
+                            }
+
                         }
                     }
                 }
@@ -138,6 +147,9 @@
 
                 function mouseOutHandler(event) {
                     var unHoveredArea = event.target;
+
+                    $("#areaName").hide();
+
 
                     removeClass($(unHoveredArea), "hovered");
 
@@ -297,6 +309,10 @@
 
 
 
+
+
+
+
                 function addInfo(dataToShow, id){
 
                     var zeile = dataToShow[0];
@@ -306,9 +322,9 @@
                     var jahr = zeile.JAHR;
                     var einwohner = parseInt(zeile.BASISWERT_3);
                     var zuzuege = parseInt(zeile.BASISWERT_1);
-                    var zuzuegeRate = getSignedNumber((zuzuege/einwohner * 100).toFixed(2));
+//                    var zuzuegeRate = (zuzuege/einwohner * 100).toFixed(2);
                     var wegzuege = parseInt(zeile.BASISWERT_2);
-                    var wegzuegeRate = getSignedNumber((wegzuege/einwohner * 100).toFixed(2));
+//                    var wegzuegeRate = (wegzuege/einwohner * 100).toFixed(2);
                     var veraenderung = zuzuege-wegzuege;
                     var veraenderungRate = getSignedNumber((veraenderung/einwohner * 100).toFixed(2));
                     var veraenderungArrow = (veraenderung > 0) ? "&uarr;" : "&darr;";
@@ -328,35 +344,37 @@
 
                     var infoElement = $("<div></div>").attr("id", id+"info").attr("class", "connectionInfoDiv");
 
-                    var firstLine;
 
-                    var closeButton = $("<div></div>")
-                            .text(String.fromCharCode(10006));
-                    var nameZeile = $("<h3></h3>").text(String.format("{0} ({1})", stadtteil, ziel));
+                    var closeButton = $("<div></div>").text(String.fromCharCode(10006));
                     var valuesBox = $("<p></p>");
 
-
-
                     valuesBox.html(String.format("" +
-                            "Jahr: <val>{0}</val><br/>" +
-                            "Einwohner: <val>{1}</val><br/>" +
-                            "Zuzüge: <val>{2} ({3}%)</val></br>" +
-                            "Wegzüge: <val>{4} ({5}%)</val></br>" +
-                            "Veränderung: <val>{6} ({7}%) {8}</val></br>",
+                            "<h>{0} ({1})</h><br/>" +
+                            "<key>Jahr:</key> <val>{2}</val><br/>" +
+                            "<key>Einwohner:</key> <val>{3}</val><br/>" +
+                            "<key>Zuzüge:</key> <val>{4} <img src='arr_white.png'/></val></br>" +
+                            "<key>Wegzüge:</key> <val>{5} <img src='arr_black.png'/></val></br>" +
+                            "<key>Veränderung:</key> <val>{6} ({7}% <img src='arr_grey.png'/>) {8}</val></br>",
+                            stadtteil, ziel,
                             jahr,
                             einwohner,
-                            zuzuege, zuzuegeRate,
-                            wegzuege, wegzuegeRate,
+                            zuzuege,
+                            wegzuege,
                             veraenderung, veraenderungRate, veraenderungArrow))
 
-                    var einwohnerZeile = $("<p></p>").text(String.format("Einwohner: {0}", einwohner));
+                    var colorOfThisBox = lineColors[currentColorIndex]
+                    currentColorIndex = (currentColorIndex+1)%lineColors.length;
 
+                    $(valuesBox).find("h").css("color", "white")
+                            .css("font-size", "10pt")
+                            .css("font-weight", "bold");
+                    $(valuesBox).find("key").css("font-weight", "bold");
+                    $(valuesBox).find("val").css("color", colorOfThisBox);
+                    $(valuesBox).find("img").css("vertical-align", "-5%");
 
-                    $(valuesBox).find("val").css("color", "green");
 
                     $("#connectionInfosContainer").append(infoElement);
                     $(infoElement).append(closeButton);
-                    $(infoElement).append(nameZeile);
                     $(infoElement).append(valuesBox);
 
                     $(closeButton)
@@ -373,10 +391,17 @@
                             })
                             .hide();
 
+                    var connectionId = id.replace("info", "");
+
                     $(infoElement).hover(function(){
                         $(closeButton).show();
+                        $(infoElement).css("border", "1px solid grey");
+                        d3.select(svgDoc).select("#"+connectionId).style("stroke-width", "28");
+
                     }, function(){
                         $(closeButton).hide();
+                        $(infoElement).css("border", "1px solid transparent");
+                        d3.select(svgDoc).select("#"+connectionId).style("stroke-width", "14");
                     });
 
                 }
@@ -408,51 +433,10 @@
 
     <input type="range" id="yearslider" />
 </div>
-<div id="connectionInfosContainer" style="margin-left: 574px;">
-    <div>
-        <p>
-            <b><span style="color: white; font-size:10pt">Neuhausen - Nymphenburg <span style="font-weight:normal;font-size:9pt">(Übriges Deutschland)</span></span></b><br/>
-            <b>Einwohner: </b><span style="color: lightblue;">93601</span><br/>
-            <b>Zuzüge: </b><span style="color: lightblue;">1632 (3,8%)</span><br/>
-            <b>Wegzüge: </b><span style="color: lightblue;">1095 (1,7%)</span><br/>
-            <b>Veränderung: </b><span style="color: lightblue;">-537 (-0.6%) &darr;</span><br/>
-        </p>
-    </div>
-
-    <div>
-        <p>
-            <b><span style="color: white; font-size:10pt">Neuhausen - Nymphenburg <span style="font-weight:normal;font-size:9pt">(Übriges Deutschland)</span></span></b><br/>
-            <b>Einwohner: </b><span style="color: lightgreen;">93601</span><br/>
-            <b>Zuzüge: </b><span style="color: lightgreen;">1632 (3,8%)</span><br/>
-            <b>Wegzüge: </b><span style="color: lightgreen;">1095 (1,7%)</span><br/>
-            <b>Veränderung: </b><span style="color: lightgreen;">+537 (+0.6%) &uarr;</span><br/>
-        </p>
-    </div>
-    <div>
-        <p>
-            <b><span style="color: white; font-size:10pt">Neuhausen - Nymphenburg <span style="font-weight:normal;font-size:9pt">(Übriges Deutschland)</span></span></b><br/>
-            <b>Einwohner: </b><span style="color: lightcoral;">93601</span><br/>
-            <b>Zuzüge: </b><span style="color: lightcoral;">1632 (3,8%)</span><br/>
-            <b>Wegzüge: </b><span style="color: lightcoral;">1095 (1,7%)</span><br/>
-            <b>Veränderung: </b><span style="color: lightcoral;">-537 (-0.6%) &darr;</span><br/>
-        </p>
-    </div>
-
-    <div>
-        <p>
-            <b><span style="color: white; font-size:10pt">Neuhausen - Nymphenburg <span style="font-weight:normal;font-size:9pt">(Übriges Deutschland)</span></span></b><br/>
-            <b>Einwohner: </b><span style="color: lightgoldenrodyellow;">93601</span><br/>
-            <b>Zuzüge: </b><span style="color: lightgoldenrodyellow;">1632 (3,8%)</span><br/>
-            <b>Wegzüge: </b><span style="color: lightgoldenrodyellow;">1095 (1,7%)</span><br/>
-            <b>Veränderung: </b><span style="color: lightgoldenrodyellow;">+537 (+0.6%) &uarr;</span><br/>
-        </p>
-    </div>
-
-</div>
+<div id="connectionInfosContainer" style="margin-left: 574px;"></div>
 <div id="info"></div>
-<div id="arrowContainer">
-
-</div>
+<div id="arrowContainer"></div>
+<div id="areaName"></div>
 
 
 </body>
