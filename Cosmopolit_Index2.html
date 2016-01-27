@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="cosmoStyle.css">
     <link rel="stylesheet" href="siteStyle.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="jquery.min.js"></script>
+    <script src="d3.v3.min.js" charset="utf-8"></script>
 
     <script type="text/javascript" src="cosmoScript.js"></script>
     <script type="text/javascript" src="processRawData.js"></script>
@@ -124,7 +124,7 @@
                     ) {
                         hoveredArea.style.cursor = "auto";
                         removeClass($(hoveredArea), "hovered");
-                        $("#areaName").hide();
+                        $("#areaName").text(hoveredArea.id);
                     }
 
                     else {       // action is possible
