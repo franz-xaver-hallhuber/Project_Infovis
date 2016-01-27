@@ -421,6 +421,7 @@ function bringToFront(id) {
     var neu = old.cloneNode(true);
     neu.addEventListener("mouseenter", connectionMouseoverHandler);
     neu.addEventListener("mouseleave", connectionMouseoutHandler);
+    neu.addEventListener("contextmenu", destroyMe);
     old.parentNode.appendChild(neu);
     old.parentNode.removeChild(old);
     highlight(id,true);
