@@ -178,15 +178,11 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
 
 function destroyMe(e) {
     e.preventDefault();
-    removeDivs(e.target.id);
-    //var svgDoc = document.getElementById("containerSVG").contentDocument;
-    var shadow = e.target.parentNode.removeChild(e.target.previousSibling);
-    e.target.parentNode.removeChild(e.target);
-
-    document.getElementById(e.target.id+"info").remove();
+    destroyById(e.target.id);
 }
 
-function destroyById(svgDoc, id){
+function destroyById(id){
+    var svgDoc = document.getElementById("containerSVG").contentDocument;
 
     var connectionId = id.replace("info", "");
     //console.log("destroying "+connectionId);
