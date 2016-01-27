@@ -167,8 +167,8 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
             .attr("class","currentLineShadow temporal");
     } else {
         svgDoc.getElementById(cLineID).addEventListener("contextmenu", destroyMe);
-        svgDoc.getElementById(cLineID).addEventListener("mouseover", connectionMouseoverHandler);
-        svgDoc.getElementById(cLineID).addEventListener("mouseout", connectionMouseoutHandler);
+        svgDoc.getElementById(cLineID).addEventListener("mouseenter", connectionMouseoverHandler);
+        svgDoc.getElementById(cLineID).addEventListener("mouseleave", connectionMouseoutHandler);
         svgDoc.getElementById(cLineID).setAttribute("pointer-events","stroke");
         currentId++;
     }
@@ -189,7 +189,7 @@ function destroyMe(e) {
 function destroyById(svgDoc, id){
 
     var connectionId = id.replace("info", "");
-    console.log(connectionId);
+    console.log("destroying "+connectionId);
 
     removeDivs(connectionId);
 
@@ -197,7 +197,8 @@ function destroyById(svgDoc, id){
     console.log("connection: ");
     console.log(connection);
 
-    connection.parentNode.removeChild(connection.previousSibling);
+    var lineShadow = svgDoc.getElementsByClassName(connectionId);
+    connection.parentNode.removeChild(lineShadow[0]);
     connection.parentNode.removeChild(connection);
 
 
@@ -216,7 +217,7 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
     //removeById(svgRoot, "currentLineShadow");
 
 
-    var currentID = drawStaticConnection(svgDoc, shadepath, linepath, addAnimation);
+    var currentIDname = drawStaticConnection(svgDoc, shadepath, linepath, addAnimation);
 
 
     if (addAnimation) {
@@ -230,18 +231,18 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         console.log("Ind: "+differenz);
 
         //add manually to document head
-        $("head").append("<style type='text/css' id="+ currentID +">" +
-            ".greenDiv." + currentID + " {" +
+        $("head").append("<style type='text/css' id="+ currentIDname +">" +
+            ".greenDiv." + currentIDname + " {" +
             "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
-            ".redDiv." + currentID + " {" +
+            ".redDiv." + currentIDname + " {" +
             "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
-            ".greyDiv." + currentID + " {" +
+            ".greyDiv." + currentIDname + " {" +
             "/*noinspection CssInvalidFunction*/motion-path: path('" + linepath + "');}\n" +
             "</style>");
 
 
         // length of the currentLine
-        var currentLineLength = svgDoc.getElementById(currentID).getTotalLength();
+        var currentLineLength = svgDoc.getElementById(currentIDname).getTotalLength();
 
         //max possible length is
         var maxlen = Math.sqrt(Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("width")), 2) + Math.pow(parseFloat(d3.select(svgDoc).select("svg").attr("height")), 2));
@@ -304,12 +305,12 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
          }*/
 
         //add required number of divs
-        addDivs(greenArrCount, redArrCount, greyArrCount, greenDir, redDir, greyDir, currentID, svgDoc);
+        addDivs(greenArrCount, redArrCount, greyArrCount, greenDir, redDir, greyDir, currentIDname, svgDoc);
 
         //select divs
-        var greenArrs = $(".greenDiv." + currentID);
-        var redArrs = $(".redDiv." + currentID);
-        var greyArrs = $(".greyDiv." + currentID);
+        var greenArrs = $(".greenDiv." + currentIDname);
+        var redArrs = $(".redDiv." + currentIDname);
+        var greyArrs = $(".greyDiv." + currentIDname);
 
         //equip divs with animation data
         for (var i = 0; i < greenArrCount; ++i) {
@@ -318,6 +319,7 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
                 .style("animation-name", greenDir)
                 .style("animation-duration", arrtime + "ms")
                 .style("animation-delay", arrtime * (i / greenArrCount) + "ms")
+                .style("z-Index", 200 + currentId * 3 + 2)
             ;
             //console.log("Zeit für grüner Pfeil " + i + ": " + arrtime * (i / greenArrCount));
         }
@@ -327,6 +329,7 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
                 .style("animation-name", redDir)
                 .style("animation-duration", arrtime + "ms")
                 .style("animation-delay", arrtime * (i / redArrCount) + "ms")
+                .style("z-Index", 200 + currentId * 3 + 2)
             ;
             //console.log("Zeit für roter Pfeil " + i + ": " + arrtime * (i / redArrCount));
         }
@@ -337,12 +340,13 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
                 .style("animation-duration", greyarrtime + "ms")
                 .style("animation-delay", greyarrtime * (i / greyArrCount) + "ms")
                 .style("animation-timing-function","cubic-bezier(0.1,0.5,0.9,0.5)")
+                .style("z-Index", 200 + currentId * 3 + 1)
             ;
             //console.log("Zeit für grauer Pfeil " + i + ": " + arrtime * (i / greyArrCount));
         }
     }
 
-    return currentID;
+    return currentIDname;
 }
 
 function areaIsAussen(area) {
@@ -389,21 +393,45 @@ function setRangeValues(min,max) {
 
 function connectionMouseoverHandler(event) {
 
-    var connectionId = event.target.id;
-    var svgDoc = document.getElementById("containerSVG").contentDocument;
-    $("#"+connectionId+"info .closeButton").show();
-    $("#"+connectionId+"info").css("border", "1px solid grey");
-    d3.select(svgDoc).select("#"+connectionId).style("stroke-width", "28");
+    console.log("connectionMouseoverHandler");
+
+    if (!event.target.classList.contains("active")) {
+        bringToFront(event.target.id);
+        console.log("inactive");
+    } else console.log("active");
+    console.log("in");
 }
 
 
-
-
 function connectionMouseoutHandler(event){
-
     var connectionId = event.target.id;
+    highlight(connectionId,false);
+    event.target.classList.toggle("active", false);
+    console.log("out");
+}
+
+function highlight(id, yes) {
     var svgDoc = document.getElementById("containerSVG").contentDocument;
-    $("#"+connectionId+"info .closeButton").hide();
-    $("#"+connectionId+"info").css("border", "1px solid transparent");
-    d3.select(svgDoc).select("#"+connectionId).style("stroke-width", "14");
+    if (yes) {
+        $("#"+id+"info .closeButton").show();
+        $("#"+id+"info").css("border", "1px solid grey");
+        d3.select(svgDoc).select("#"+id).style("stroke-width", "28");
+    } else {
+        $("#"+id+"info .closeButton").hide();
+        $("#"+id+"info").css("border", "1px solid transparent");
+        d3.select(svgDoc).select("#"+id).style("stroke-width", "14");
+    }
+}
+
+function bringToFront(id) {
+    var svgDoc = document.getElementById("containerSVG").contentDocument;
+    var old = svgDoc.getElementById(id);
+    var neu = old.cloneNode(true);
+    neu.addEventListener("mouseenter", connectionMouseoverHandler);
+    neu.addEventListener("mouseleave", connectionMouseoutHandler);
+    old.parentNode.appendChild(neu);
+    old.parentNode.removeChild(old);
+    highlight(id,true);
+    neu.classList.toggle("active", true);
+    console.log("bringtofront");
 }

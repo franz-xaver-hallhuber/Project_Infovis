@@ -207,7 +207,6 @@
 }
 
 .greenDiv {
-    z-index: 10;
     position: absolute;
     top: 184px;
     left: -66px;
@@ -220,7 +219,6 @@
     pointer-events:none;
 }
 .redDiv {
-    z-index: 9;
     position: absolute;
     top: 184px;
     left: -66px;
@@ -234,7 +232,6 @@
 
 }
 .greyDiv {
-    z-index: 8;
     position: absolute;
     top: 184px;
     left: -70px;
@@ -255,15 +252,12 @@
     fill: none;
 }
 
-.currentLine:hover {
-    stroke: orange;
-}
-
 .currentLineShadow {
     stroke: black;
     opacity: 0.1;
     stroke-width: 10;
     fill: none;
+    z-index: 99;
 }
 
 #areaName {

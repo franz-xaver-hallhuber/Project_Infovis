@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="siteStyle.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="d3.v3.min.js" charset="utf-8"></script>
 
     <script type="text/javascript" src="cosmoScript.js"></script>
     <script type="text/javascript" src="processRawData.js"></script>
@@ -94,6 +94,8 @@
 
                     $("#areaName").css("left", event.pageX*1 + 20 + "px");
                     $("#areaName").css("top", event.pageY*1 + 20 + "px");
+
+                    console.log("move");
 
                 }
 
@@ -351,7 +353,7 @@
                     var valuesBox = $("<p></p>");
 
                     valuesBox.html(String.format("" +
-                            "<h>{0} ({1})</h><br/>" +
+                            "<h>{0} &harr; {1}</h><br/>" +
                             "<key>Jahr:</key> <val>{2}</val><br/>" +
                             "<key>Einwohner:</key> <val>{3}</val><br/>" +
                             "<key>Zuzüge:</key> <val>{4} <img src='arr_white.png'/></val></br>" +
@@ -362,9 +364,9 @@
                             einwohner,
                             zuzuege,
                             wegzuege,
-                            veraenderung, veraenderungRate, veraenderungArrow))
+                            veraenderung, veraenderungRate, veraenderungArrow));
 
-                    var colorOfThisBox = lineColors[currentColorIndex]
+                    var colorOfThisBox = lineColors[currentColorIndex];
                     currentColorIndex = (currentColorIndex+1)%lineColors.length;
 
                     $(valuesBox).find("h").css("color", "white")
@@ -398,8 +400,9 @@
                     $(infoElement).hover(function(){
                         $(closeButton).show();
                         $(infoElement).css("border", "1px solid grey");
-                        d3.select(svgDoc).select("#"+connectionId).style("stroke-width", "28");
-
+                        var el = d3.select(svgDoc).select("#"+connectionId)
+                                .style("stroke-width", "28");
+                        bringToFront(id);
                     }, function(){
                         $(closeButton).hide();
                         $(infoElement).css("border", "1px solid transparent");
