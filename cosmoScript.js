@@ -1,7 +1,7 @@
 
 
 var lineColors = ["LightBlue", "LightGreen", "LightCoral", "LightGoldenRodYellow", "LightSalmon", "LightPink", "LightCyan"];
-var currentColorIndex = 0;
+var currentColorIndex = Math.floor(Math.random()*(lineColors.length+1));
 var currentId = 0;
 
 function toggleClass(element, value) {
