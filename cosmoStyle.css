@@ -185,19 +185,6 @@
     /*fill: orange;*/
 /*}*/
 
-.greenDiv {
-    z-index: 10;
-    position: absolute;
-    top: 142px;
-    left: -58px;
-    opacity:0;
-    margin: 0 auto;
-    will-change: transform;
-    animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
-    max-height: 14px;
-    pointer-events:none;
-}
 
 .greenSvg {
     /*fill: darkgreen;*/
@@ -219,11 +206,24 @@
     box-shadow: darkgrey;
 }
 
+.greenDiv {
+    z-index: 10;
+    position: absolute;
+    top: 184px;
+    left: -66px;
+    opacity:0;
+    margin: 0 auto;
+    will-change: transform;
+    animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    max-height: 14px;
+    pointer-events:none;
+}
 .redDiv {
     z-index: 9;
     position: absolute;
-    top: 142px;
-    left: -58px;
+    top: 184px;
+    left: -66px;
     opacity:0;
     margin: 0 auto;
     will-change: transform;
@@ -233,12 +233,11 @@
     pointer-events:none;
 
 }
-
 .greyDiv {
     z-index: 8;
     position: absolute;
-    top: 142px;
-    left: -62px;
+    top: 184px;
+    left: -70px;
     opacity:0;
     margin: 0 auto;
     will-change: transform;

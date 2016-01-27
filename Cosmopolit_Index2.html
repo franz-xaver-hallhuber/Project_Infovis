@@ -36,6 +36,8 @@
                 allDataCleaned.push.apply(allDataCleaned, getCleanedAussenwanderung(aussenPackage[0]));
                 allDataCleaned.push.apply(allDataCleaned, getCleanedBinnenwanderung(binnenPackage[0]));
 
+                sortByINDIKATOR_WERT(allDataCleaned);
+
                 console.log("Formatted both sets and threw them together, now %c" + allDataCleaned.length + "%c items.",
                         "color: blue;",
                         "color: default;");
@@ -422,6 +424,9 @@
     </style>
 </head>
 <body>
+
+<div style="text-align:center; height: 50px; line-height: 50px; font-size:22pt; font-weight: lighter;">
+    Münchner Cosmopoliten-Index</div>
 
 <div style="float:left;">
     <object data="muenchen_exportiert.svg" type="image/svg+xml" id="containerSVG"></object>

@@ -130,21 +130,29 @@ function getCleanedBinnenwanderung(data){
 
 
 
-function sortByINDIKATOR_WERT(){
-    allDataCleaned.sort(function (a, b) {
-        if (a.INDIKATOR_WERT > b.INDIKATOR_WERT) {
+function sortByINDIKATOR_WERT(data){
+    data.sort(function (c, d) {
+
+        a = parseFloat(c.INDIKATOR_WERT);
+        b = parseFloat(d.INDIKATOR_WERT);
+
+        if (a > b) {
             return 1;
         }
-        if (a.INDIKATOR_WERT < b.INDIKATOR_WERT) {
+        if (a < b) {
             return -1;
         }
         // a must be equal to b
         return 0;
     });
 
-    for(var i = 0; i < allDataCleaned.length; i++){
-        console.log(allDataCleaned[i].JAHR);
+    var result = "";
+    for(var i = 0; i < data.length; i++){
+        result+=data[i].INDIKATOR_WERT+";";
+        console.log(data[i].INDIKATOR_WERT);
+        //console.log(data[i]);
     }
+    console.log(result);
 }
 
 function sortByJahr(allDataCleaned){

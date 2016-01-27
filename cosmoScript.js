@@ -125,6 +125,10 @@ function calculatePathPoints(startPoint, endPoint) {
         + " Q "
         + xBez + " " + yBez + " "
         + endPoint.x + " " + endPoint.y;
+    //var linepath = "M "
+    //    + startx + " " + starty
+    //    + " L "
+    //    + endPoint.x + " " + endPoint.y;
     return {shadepath: shadepath, linepath: linepath};
 }
 
@@ -245,7 +249,8 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         // Datensatz-Werte gehen von -25.1 bis 51.6
         var zuzuegeMapped = map_range(Math.abs(zuzuege), 0, 4192, 0.1, 1.9);
         var wegzuegeMapped = map_range(Math.abs(wegzuege), 0, 4192, 0.1, 1.9);
-        var differenzMapped = map_range(differenz, -3193, 3193, -10, 10);
+        //var differenzMapped = map_range(differenz, -3193, 3193, -10, 10);
+        var differenzMapped = map_range(differenz, -25.1, 51.6, -7, 7);
 
         console.log("Input\tMapped\n" +
             + zuzuege + "\t" + zuzuegeMapped + "\n" +
