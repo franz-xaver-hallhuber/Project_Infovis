@@ -93,7 +93,7 @@ function addDivs(nrgreen, nrred, nrgrey, greendir, reddir, greydir, refId, doc) 
 }
 
 function removeDivs(ofId) {
-    console.log("removing connection " + ofId);
+    //console.log("removing connection " + ofId);
     $("."+ofId).remove();
     $("#"+ofId).remove();
     //$("style[id='dynCss']").remove();
@@ -189,13 +189,13 @@ function destroyMe(e) {
 function destroyById(svgDoc, id){
 
     var connectionId = id.replace("info", "");
-    console.log("destroying "+connectionId);
+    //console.log("destroying "+connectionId);
 
     removeDivs(connectionId);
 
     var connection = svgDoc.getElementById(connectionId);
-    console.log("connection: ");
-    console.log(connection);
+    //console.log("connection: ");
+    //console.log(connection);
 
     var lineShadow = svgDoc.getElementsByClassName(connectionId);
     connection.parentNode.removeChild(lineShadow[0]);
@@ -226,9 +226,6 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         var wegzuege = zeile.BASISWERT_2;
         var differenz = zuzuege-wegzuege;
         var rate = zeile.INDIKATOR_WERT;
-        console.log("Rein: "+zuzuege);
-        console.log("Raus: "+wegzuege);
-        console.log("Ind: "+differenz);
 
         //add manually to document head
         $("head").append("<style type='text/css' id="+ currentIDname +">" +
@@ -254,7 +251,6 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         //var differenzMapped = map_range(differenz, -3193, 3193, -10, 10);
         //var differenzMapped = map_range(rate, -25.1, 51.6, -7, 7);
         var differenzMapped = map_range(rate, -51.6, 51.6, -10, 10);
-        console.log("Rate: "+rate);
 
         console.log("Input\tMapped\n" +
             + zuzuege + "\t" + zuzuegeMapped + "\n" +
@@ -393,13 +389,10 @@ function setRangeValues(min,max) {
 
 function connectionMouseoverHandler(event) {
 
-    console.log("connectionMouseoverHandler");
 
     if (!event.target.classList.contains("active")) {
         bringToFront(event.target.id);
-        console.log("inactive");
-    } else console.log("active");
-    console.log("in");
+    }
 }
 
 
@@ -407,7 +400,6 @@ function connectionMouseoutHandler(event){
     var connectionId = event.target.id;
     highlight(connectionId,false);
     event.target.classList.toggle("active", false);
-    console.log("out");
 }
 
 function highlight(id, yes) {
@@ -433,5 +425,4 @@ function bringToFront(id) {
     old.parentNode.removeChild(old);
     highlight(id,true);
     neu.classList.toggle("active", true);
-    console.log("bringtofront");
 }

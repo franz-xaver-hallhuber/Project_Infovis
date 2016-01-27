@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>The Munich Cosmopolit Index</title>
-    <link rel="stylesheet" href="cosmoStyle.css">
-    <link rel="stylesheet" href="siteStyle.css">
+    <title>Münchner Cosmopoliten-Index</title>
+    <link rel="stylesheet" href="styles/cosmoStyle.css">
+    <link rel="stylesheet" href="styles/siteStyle.css">
 
-    <script src="jquery.min.js"></script>
-    <script src="d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/d3.v3.min.js" charset="utf-8"></script>
 
-    <script type="text/javascript" src="cosmoScript.js"></script>
-    <script type="text/javascript" src="processRawData.js"></script>
+    <script type="text/javascript" src="js/cosmoScript.js"></script>
+    <script type="text/javascript" src="js/processRawData.js"></script>
 
     <!--<todo>
         <item id="todo1">Mehrere Pfeile gleichzeitig DONE</item>
@@ -36,16 +36,12 @@
                 allDataCleaned.push.apply(allDataCleaned, getCleanedAussenwanderung(aussenPackage[0]));
                 allDataCleaned.push.apply(allDataCleaned, getCleanedBinnenwanderung(binnenPackage[0]));
 
-                sortByINDIKATOR_WERT(allDataCleaned);
-
                 console.log("Formatted both sets and threw them together, now %c" + allDataCleaned.length + "%c items.",
                         "color: blue;",
                         "color: default;");
 
                 console.log("Et voilà: ");
                 console.log(allDataCleaned);
-
-//                sortByJahr(allDataCleaned);
 
                 var years = [];
                 $.each(allDataCleaned, function(i,v) {
@@ -103,7 +99,6 @@
                     $("#areaName").css("left", event.pageX*1 + 20 + "px");
                     $("#areaName").css("top", event.pageY*1 + 20 + "px");
 
-                    console.log("move");
 
                 }
 
@@ -364,9 +359,9 @@
                             "<h>{0} &harr; {1}</h><br/>" +
                             "<key>Jahr:</key> <val>{2}</val><br/>" +
                             "<key>Einwohner:</key> <val>{3}</val><br/>" +
-                            "<key>Zuzüge:</key> <val>{4} <img src='arr_white.png'/></val></br>" +
-                            "<key>Wegzüge:</key> <val>{5} <img src='arr_black.png'/></val></br>" +
-                            "<key>Veränderung:</key> <val>{6} ({7}% <img src='arr_grey.png'/>) {8}</val></br>",
+                            "<key>Zuzüge:</key> <val>{4} <img src='img/arr_white.png'/></val></br>" +
+                            "<key>Wegzüge:</key> <val>{5} <img src='img/arr_black.png'/></val></br>" +
+                            "<key>Veränderung:</key> <val>{6} ({7}% <img src='img/arr_grey.png'/>) {8}</val></br>",
                             stadtteil, ziel,
                             jahr,
                             einwohner,
@@ -474,14 +469,14 @@
     Münchner Cosmopoliten-Index</div>
 
 <div style="float:left;">
-    <object data="muenchen_exportiert.svg" type="image/svg+xml" id="containerSVG"></object>
+    <object data="img/muenchen_exportiert.svg" type="image/svg+xml" id="containerSVG"></object>
 
 </div>
 
 <div id="connectionInfosContainer" style="margin-left: 574px;">
 
     <div style=" text-align:center;">
-        <div id="loading-indicator"><img src="img_load-indicator.gif"/></div>
+        <div id="loading-indicator"><img src="img/img_load-indicator.gif"/></div>
         <div id="currentyearspan"></div>
         <div><input type="range" id="yearslider" value="2012"/>
         </div>
@@ -507,7 +502,7 @@
 <div id="arrowContainer"></div>
 <div id="areaName"></div>
 
-<a id="showHelp" href="#" style="cursor: pointer; position:fixed; right:15px; top:15px;"><img src="help.png"/></a>
+<a id="showHelp" href="#" style="cursor: pointer; position:fixed; right:15px; top:15px;"><img src="img/help.png"/></a>
 
 
 </body>
