@@ -224,6 +224,7 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         var zuzuege = zeile.BASISWERT_1;
         var wegzuege = zeile.BASISWERT_2;
         var differenz = zuzuege-wegzuege;
+        var rate = zeile.INDIKATOR_WERT;
         console.log("Rein: "+zuzuege);
         console.log("Raus: "+wegzuege);
         console.log("Ind: "+differenz);
@@ -250,7 +251,9 @@ function drawConnection(svgDoc, startPoint, endPoint, addAnimation, startIsInnen
         var zuzuegeMapped = map_range(Math.abs(zuzuege), 0, 4192, 0.1, 1.9);
         var wegzuegeMapped = map_range(Math.abs(wegzuege), 0, 4192, 0.1, 1.9);
         //var differenzMapped = map_range(differenz, -3193, 3193, -10, 10);
-        var differenzMapped = map_range(differenz, -25.1, 51.6, -7, 7);
+        //var differenzMapped = map_range(rate, -25.1, 51.6, -7, 7);
+        var differenzMapped = map_range(rate, -51.6, 51.6, -10, 10);
+        console.log("Rate: "+rate);
 
         console.log("Input\tMapped\n" +
             + zuzuege + "\t" + zuzuegeMapped + "\n" +
