@@ -53,6 +53,8 @@
                 });
 
                 setRangeValues(Math.min.apply(null,years),Math.max.apply(null,years));
+                $("#readmeBox").show();
+
 
             });
 
@@ -78,6 +80,12 @@
                     allAreas[i].addEventListener("mouseout", mouseOutHandler);
                     allAreas[i].addEventListener("click", mouseClickHandler);
                 }
+
+                setupReadmeBox();
+
+                $("#showHelp").click(function() {
+                    $("#readmeBox").toggle();
+                });
 
 
 
@@ -409,8 +417,42 @@
                 }
 
 
+
+
+                function setupReadmeBox(){
+
+                    var infoElement = $("#readmeBox");
+                    var closeButton = $("#readmeBoxCloseButton");
+
+                    $(infoElement).hover(function(){
+                        $(closeButton).show();
+                        $(infoElement).css("border", "1px solid grey");
+
+                    }, function(){
+                        $(closeButton).hide();
+                        $(infoElement).css("border", "1px solid transparent");
+                    });
+
+                    $(closeButton)
+                            .attr("class", "closeButton")
+                            .css("cursor", "pointer")
+                            .hover(function(){
+                                $(this).css("color", "red");
+                            }, function(){
+                                $(this).css("color", "white");
+                            })
+                            .click(function(){
+                                infoElement.hide();
+                            })
+                            .hide();
+                }
+
+
             }, false);
         })
+
+
+
     </script>
 
     <!--
@@ -441,10 +483,27 @@
         <div><input type="range" id="yearslider" value="2012"/>
         </div>
     </div>
+
+    <div id="readmeBox" class="connectionInfoDiv" style="border: 1px solid transparent; display: none;">
+        <div id="readmeBoxCloseButton" class="closeButton" style="cursor: pointer; display: none;">✖</div>
+        <p>
+            <h style="color: white; font-size: 10pt; font-weight: bold;">Bedienungshinweise:</h><br>
+        <ul>
+            <li>Wähle mit dem Slider das Jahr aus, das dich interessiert.</li>
+            <li>Klicke auf einen Stadtteil, der dich interessiert.</li>
+            <li>Ziehe die Linie und klicke auf die Region, deren Wanderungsziffer dich interessiert.</li>
+            <li>Ziehe so viele Linien, wie du möchtest, um verschiedene Werte zu vergleichen.</li>
+            <li>Deaktiviere unbenötigte Linien durch Rechtsklick auf die Linie, oder durch Klick auf das Kreuz im entsprechenden Listeneintrag.</li>
+        </ul>
+        </p></div>
+
+
 </div>
 <div id="info"></div>
 <div id="arrowContainer"></div>
 <div id="areaName"></div>
+
+<a id="showHelp" href="#" style="cursor: pointer; position:fixed; right:15px; top:15px;"><img src="help.png"/></a>
 
 
 </body>
