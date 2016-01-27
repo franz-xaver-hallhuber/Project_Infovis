@@ -137,14 +137,20 @@ function drawStaticConnection(svgDoc, shadepath, linepath, isFinal) {
 
     d3.select(svgDoc).selectAll(".temporal").remove();
 
+    var num = d3.select(svgDoc).selectAll(".currentLine").size();
+    if (num == 0) currentId = 0;
+    console.log("nrofpaths " + num);
+
     var cLineID = "currentLine" + currentId;
     var cLineSID = "currentShadowLine" + currentId;
     //var cLineID = "currentLine" + d3.select(svgDoc).selectAll(".currentLine").size();
     //var cLineSID = "currentShadowLine" + d3.select(svgDoc).selectAll(".currentLineShadow").size();
 
+
+
     //draw shadow line
     d3.select(svgDoc).select("svg")
-        .append("path")
+        .insert("path", num == 0 ? null : "#currentLine0")
         .attr("d", shadepath)
         .attr("class", "currentLineShadow " + cLineID)
         .attr("id", cLineSID)
